@@ -1,4 +1,4 @@
-class wmOverflowSlider {
+class wmCollectionCarousel {
   static get defaultSettings() {
     const freeMode = false;
     return {
@@ -197,7 +197,7 @@ class wmOverflowSlider {
       },
       pagination: {
         enabled: settings.pagination,
-        el: ".overflow-slider-pagination .pagination-wrapper",
+        el: ".collection-carousel-pagination .pagination-wrapper",
         clickable: true,
         type: settings.paginationType,
       },
@@ -245,7 +245,7 @@ class wmOverflowSlider {
     };
   }
   static get userSettings() {
-    return window["wmOverflowSliderSettings"] || {};
+    return window["wmCollectionCarouselSettings"] || {};
   }
   static instanceSettings(el) {
     const dataAttributes = {};
@@ -305,18 +305,18 @@ class wmOverflowSlider {
   }
   constructor(el) {
     this.el = el;
-    this.settings = wmOverflowSlider.deepMerge(
+    this.settings = wmCollectionCarousel.deepMerge(
       {},
-      wmOverflowSlider.defaultSettings,
-      wmOverflowSlider.userSettings,
-      wmOverflowSlider.instanceSettings(el)
+      wmCollectionCarousel.defaultSettings,
+      wmCollectionCarousel.userSettings,
+      wmCollectionCarousel.instanceSettings(el)
     );
 
     this.init();
   }
   async init() {
     const self = this;
-    wmOverflowSlider.emitEvent("wmOverflowSlider:beforeInit", self);
+    wmCollectionCarousel.emitEvent("wmCollectionCarousel:beforeInit", self);
     const {items, type} = await this.getCollectionData();
     if (items.length <= 0) {
       console.error("No Items In Collection or Collection URL not available");
@@ -328,9 +328,9 @@ class wmOverflowSlider {
     this.buildStructure();
     this.swiper = new Swiper(
       this.el,
-      wmOverflowSlider.getSwiperConfig(this.settings)
+      wmCollectionCarousel.getSwiperConfig(this.settings)
     );
-    wmOverflowSlider.emitEvent("wmOverflowSlider:ready", self);
+    wmCollectionCarousel.emitEvent("wmCollectionCarousel:ready", self);
   }
   build() {
     return {
@@ -524,7 +524,7 @@ class wmOverflowSlider {
   buildStructure() {
     // Create main swiper container
     const swiperContainer = this.el;
-    swiperContainer.className = "swiper overflow-slider";
+    swiperContainer.className = "swiper collection-carousel";
 
     // Create wrapper for slides
     const swiperWrapper = document.createElement("div");
@@ -543,7 +543,7 @@ class wmOverflowSlider {
     // Create slides for each item
     this.items.forEach(item => {
       const slide = document.createElement("div");
-      slide.className = "swiper-slide overflow-slider-slide";
+      slide.className = "swiper-slide collection-carousel-slide";
 
       // Create image container with focal point support
       let imageContainer;
@@ -721,7 +721,7 @@ class wmOverflowSlider {
     if (this.settings.pagination) {
       const pagination = document.createElement("div");
       this.pagination = pagination;
-      pagination.className = "overflow-slider-pagination";
+      pagination.className = "collection-carousel-pagination";
 
       const paginationWrapper = document.createElement("div");
       paginationWrapper.className = "pagination-wrapper";
@@ -908,19 +908,19 @@ class wmOverflowSlider {
 }
 
 (() => {
-  function initOverflowSlider() {
+  function initCollectionCarousel() {
     const els = document.querySelectorAll(
-      '[data-wm-plugin="overflow-slider"]:not([data-loading])'
+      '[data-wm-plugin="collection-carousel"]:not([data-loading])'
     );
     if (!els.length) return;
     els.forEach(el => {
       el.dataset.loading = "loading";
-      new wmOverflowSlider(el);
+      new wmCollectionCarousel(el);
     });
   }
-  window.wmOverflowSlider = {
-    init: () => initOverflowSlider(),
+  window.wmCollectionCarousel = {
+    init: () => initCollectionCarousel(),
   };
-  window.wmOverflowSlider.init();
-  window.addEventListener("DOMContentLoaded", initOverflowSlider);
+  window.wmCollectionCarousel.init();
+  window.addEventListener("DOMContentLoaded", initCollectionCarousel);
 })();
