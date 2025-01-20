@@ -5,6 +5,7 @@ class wmCollectionCarousel {
       layout: "full-width", // header-adapt or folder
       fullWidth: false,
       speed: 300,
+      limit: 20,
       cacheCollections: false,
       cacheDuration: 0, // minutes
       clickthrough: true,
@@ -52,10 +53,11 @@ class wmCollectionCarousel {
       slidesPerGroupLg: 1,
       spaceBetweenSm: 17,
       spaceBetweenMd: 34,
-      spaceBetweenLg: 34,
+      spaceBetweenLg: 54,
       events: "all", // upcoming, past
       effect: null,
-      coverflowRotate: 30,
+      coverflowRotate: 0,
+      coverflowScale: 1,
       coverflowSlideShadows: false,
       eventDateFormat: {
         showYear: true,
@@ -127,7 +129,6 @@ class wmCollectionCarousel {
       }
 
       let offset = (window.innerWidth - tempBlockWidth) / 2;
-      // offset = 0;
 
       settings.slidesOffsetBefore = offset;
       swiper.params.slidesOffsetBefore = offset;
@@ -184,11 +185,13 @@ class wmCollectionCarousel {
       effect: settings.effect,
       coverflowEffect: {
         rotate: settings.coverflowRotate,
+        scale: settings.coverflowScale,
         slideShadows: settings.coverflowSlideShadows,
       },
       freeMode: {
         enabled: settings.freeMode,
         sticky: false,
+        momentum: false
       },
       keyboard: {
         enabled: true,
@@ -207,7 +210,7 @@ class wmCollectionCarousel {
       navigation: {
         enabled: settings.navigation,
         nextEl: ".navigation-button-next",
-        prevEl: ".navigation-button-prev-sm",
+        prevEl: settings.freeMode ? ".navigation-button-prev.asdf" : ".navigation-button-prev", // basically preventing the event listeners from mounting if free mode is enabled
       },
       pagination: {
         enabled: settings.pagination,
@@ -259,6 +262,19 @@ class wmCollectionCarousel {
           window.addEventListener("resize", () => {
             updateSwiperOffsets(swiper);
             updateSlideWidths(swiper);
+          });
+
+          swiper.el.addEventListener("mousemove", () => {
+            if (settings.freeMode) {
+              swiper.params.freeMode.enabled = true;
+              swiper.update();
+            }
+          });
+          swiper.el.addEventListener("touchstart", () => {
+            if (settings.freeMode) {
+              swiper.params.freeMode.enabled = false;
+              swiper.update();
+            }
           });
 
           // If navigation buttons & free mode, we need a custom prev button event
@@ -378,10 +394,11 @@ class wmCollectionCarousel {
       el.offsetWidth === window.innerWidth
         ? (el.dataset.fullWidth = true)
         : (el.dataset.fullWidth = false);
-
-      console.log(el.dataset.fullWidth);
     }
     if (el.dataset.effect === "coverflow" && !el.dataset.centeredSlides) {
+      el.dataset.centeredSlides = true;
+    }
+    if (!el.dataset.centeredSlides && el.dataset.loop === "true") {
       el.dataset.centeredSlides = true;
     }
 
@@ -703,7 +720,10 @@ class wmCollectionCarousel {
     const builders = this.build();
 
     // Create slides for each item
-    this.items.forEach(item => {
+    console.log(this.settings.limit);
+    this.items.forEach((item, index) => {
+      if (index >= this.settings.limit) return;
+
       const slide = document.createElement("div");
       slide.className = "swiper-slide collection-carousel-slide";
 
@@ -712,12 +732,6 @@ class wmCollectionCarousel {
       if (this.settings.thumbnail) {
         imageContainer = document.createElement("div");
         imageContainer.className = "slide-thumbnail";
-        // imageContainer.style.position = "relative";
-        // imageContainer.style.overflow = "hidden";
-        // if (this.settings.aspectRatio) {
-        //   imageContainer.classList.add("aspect-ratio");
-        // imageContainer.style.aspectRatio = this.settings.aspectRatio;
-        // }
 
         const image = document.createElement("img");
         image.src = item.assetUrl;
