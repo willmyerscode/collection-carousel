@@ -758,7 +758,7 @@ html:has([data-wm-plugin="collection-carousel"]) {
 
 
 [data-wm-plugin="collection-carousel"] .slide-thumbnail {
-  aspect-ratio: var(--wm-cc-aspect-ratio, auto);
+  aspect-ratio: var(--wm-cc-aspect-ratio, 4/3);
   position: relative;
   overflow: hidden;
 }
