@@ -938,13 +938,6 @@ class wmCollectionCarousel {
     swiperContainer.appendChild(swiperWrapper);
     this.el.appendChild(swiperContainer);
 
-    /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
-    if (
-      this.settings.loop &&
-      this.settings.slidesPerViewLg + 2 >= this.items.length
-    ) {
-      this.settings.slidesPerViewLg = this.items.length - 2;
-    }
 
     // Add navigation elements
     if (this.settings.navigation) {
@@ -978,6 +971,14 @@ class wmCollectionCarousel {
       navigationWrapper.appendChild(prevButtonWrapper);
       navigationWrapper.appendChild(nextButtonWrapper);
       this.el.appendChild(this.navigationWrapper);
+    }
+
+    /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
+    if (
+      this.settings.loop &&
+      this.settings.slidesPerViewLg + 2 >= this.items.length
+    ) {
+      this.settings.slidesPerViewLg = this.items.length - 2;
     }
 
     if (this.settings.pagination) {
