@@ -7,6 +7,7 @@ class wmCollectionCarousel {
       fullWidth: false,
       speed: 300,
       limit: 20,
+      featured: false,
       cacheCollections: false,
       cacheDuration: 0, // minutes
       clickthrough: true,
@@ -426,12 +427,14 @@ class wmCollectionCarousel {
       el.dataset.dynamicBullets = true;
       el.dataset.dynamicMainBullets = el.dataset.dynamicBullets;
     }
-
     if (el.dataset.autoplay) {
       const number = parseInt(el.dataset.autoplay);
       if (number < 10 && number > 0) {
         el.dataset.autoplay = number * 1000;
       }
+    }
+    if (!el.dataset.navigationLayout && el.dataset.navigation !== "false") {
+      el.dataset.navigationLayout = "overlay";
     }
 
     function parseAttr(string) {
@@ -513,6 +516,11 @@ class wmCollectionCarousel {
       wmCollectionCarousel.getSwiperConfig(this.settings, this.el)
     );
     wmCollectionCarousel.emitEvent("wmCollectionCarousel:ready", self);
+    this.el.wmCollectionCarousel = {
+      settings: this.settings,
+      swiper: this.swiper,
+      items: this.items,
+    }
   }
   build() {
     return {
@@ -741,7 +749,6 @@ class wmCollectionCarousel {
   }
   buildStructure() {
     // Create main swiper container
-    
     const swiperContainer = document.createElement("div");
     this.swiperContainer = swiperContainer;
     swiperContainer.className = "swiper collection-carousel";
@@ -766,8 +773,8 @@ class wmCollectionCarousel {
     const builders = this.build();
 
     // Create slides for each item
-    this.items.forEach((item, index) => {
-      if (index >= this.settings.limit) return;
+    this.items.forEach(item => {
+      // if (index >= this.settings.limit) return;
 
       const slide = document.createElement("div");
       slide.className = "swiper-slide collection-carousel-slide";
@@ -1001,8 +1008,9 @@ class wmCollectionCarousel {
 
   async getCollectionData() {
     const sourceUrl = this.el.dataset.source;
+    const limit = this.settings.limit;
     if (!sourceUrl) return;
-    const items = [];
+    let items = [];
     let collection = null;
     let website = null;
     let type = null;
@@ -1082,7 +1090,17 @@ class wmCollectionCarousel {
           }
         }
 
+        if (this.settings.featured){
+          currentItems = currentItems.filter(item => item.starred);
+        }
+
+
         items.push(...currentItems);
+
+        if (items.length >= limit) {
+          items = items.slice(0, limit);
+          return {items, type};
+        }
 
         if (json.pagination?.nextPage) {
           await getData(
@@ -1095,6 +1113,21 @@ class wmCollectionCarousel {
         throw error;
       }
     };
+
+    const saveFreshDataToCache = async () => {
+      const freshData = await getData(sourceUrl + "?format=json");
+
+      // Save to cache if duration is set
+      if (this.settings.cacheDuration > 0) {
+        localStorage.setItem(cacheKey, JSON.stringify(freshData));
+        localStorage.setItem(
+          cacheMetaKey,
+          JSON.stringify({
+            timestamp: new Date().getTime(),
+          })
+        );
+      }
+    }
 
     try {
       const cacheKey = getCacheKey(sourceUrl);
