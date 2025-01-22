@@ -43,8 +43,11 @@ class wmCollectionCarousel {
       autoplayDelay: 3000,
       autoplayDisableOnInteraction: false,
       navigation: true,
+      navigationLayout: "overlay",
       pagination: true,
       paginationType: "bullets",
+      dynamicBullets: false,
+      dynamicMainBullets: 8,
       slidesPerViewSm: 1,
       slidesPerViewMd: 2,
       slidesPerViewLg: 4,
@@ -191,7 +194,9 @@ class wmCollectionCarousel {
       freeMode: {
         enabled: settings.freeMode,
         sticky: false,
-        momentum: false
+        momentum: true,
+        momentumRatio: 0.5,
+        momentumVelocityRatio: 0.5,
       },
       keyboard: {
         enabled: true,
@@ -217,6 +222,8 @@ class wmCollectionCarousel {
         el: ".collection-carousel-pagination .pagination-wrapper",
         clickable: true,
         type: settings.paginationType,
+        dynamicBullets: settings.dynamicBullets,
+        dynamicMainBullets: settings.dynamicMainBullets,
       },
       breakpoints: {
         0: {
@@ -401,6 +408,10 @@ class wmCollectionCarousel {
     if (!el.dataset.centeredSlides && el.dataset.loop === "true") {
       el.dataset.centeredSlides = true;
     }
+    if (el.dataset.dynamicBullets) {
+      el.dataset.dynamicBullets = true;
+      el.dataset.dynamicMainBullets = el.dataset.dynamicBullets;
+    }
 
     if (el.dataset.autoplay) {
       const number = parseInt(el.dataset.autoplay);
@@ -474,6 +485,7 @@ class wmCollectionCarousel {
     }
     this.type = type;
     this.items = items;
+    this.siteJson = window.Static?.SQUARESPACE_CONTEXT?.tweakJSON || {};
 
     this.buildStructure();
     this.swiper = new wmCollectionCarousel.Swiper(
@@ -499,7 +511,7 @@ class wmCollectionCarousel {
                 <li>
                     <span class="tag" rel="tag">${tag}${
               index < array.length - 1 && this.settings.tagsDelimiter === ", "
-                ? ","
+                ? `<span class="tag-delimiter">,</span>`
                 : ""
             }</span>
                 </li>
@@ -508,7 +520,7 @@ class wmCollectionCarousel {
           .join(
             this.settings.tagsDelimiter === ", "
               ? " "
-              : this.settings.tagsDelimiter
+              : `<span class="tag-delimiter">${this.settings.tagsDelimiter}</span>`
           );
 
         tags.appendChild(tagList);
@@ -532,7 +544,7 @@ class wmCollectionCarousel {
                 <span class="category" rel="category">${category}${
                 index < array.length - 1 &&
                 this.settings.categoriesDelimiter === ", "
-                  ? ","
+                  ? `<span class='category-delimiter'>,</span>`
                   : ""
               }</span>
               </li>
@@ -541,7 +553,7 @@ class wmCollectionCarousel {
             .join(
               this.settings.categoriesDelimiter === ", "
                 ? " "
-                : this.settings.categoriesDelimiter
+                : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`
             );
         } else if (item.categoriesFull?.length) {
           categoryList.innerHTML = item.categoriesFull
@@ -551,7 +563,7 @@ class wmCollectionCarousel {
                 <span class="category" rel="category">${category.displayName}${
                 index < array.length - 1 &&
                 this.settings.categoriesDelimiter === ", "
-                  ? ","
+                  ? "<span class='category-delimiter'>,</span>"
                   : ""
               }</span>
               </li>
@@ -560,7 +572,7 @@ class wmCollectionCarousel {
             .join(
               this.settings.categoriesDelimiter === ", "
                 ? " "
-                : this.settings.categoriesDelimiter
+                : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`
             );
         }
 
@@ -570,7 +582,9 @@ class wmCollectionCarousel {
       publisheddate: item => {
         if (!item?.publishOn) return null;
         const date = document.createElement("div");
+        const dateContent = document.createElement("p");
         date.className = "published-on metadata";
+        date.appendChild(dateContent);
 
         // Format the date using the same options as event dates
         const publishDate = new Date(item.publishOn);
@@ -583,7 +597,10 @@ class wmCollectionCarousel {
           minute: undefined,
         };
 
-        date.innerHTML = publishDate.toLocaleString(dateFormat.locale, options);
+        dateContent.innerHTML = publishDate.toLocaleString(
+          dateFormat.locale,  
+          options
+        );
         return date;
       },
       publishdate: function (item) {
@@ -595,8 +612,10 @@ class wmCollectionCarousel {
       author: item => {
         if (!item?.author) return null;
         const author = document.createElement("div");
+        const authorContent = document.createElement("p");
         author.className = "author metadata";
-        author.innerHTML = item.author?.displayName;
+        author.appendChild(authorContent);
+        authorContent.innerHTML = item.author?.displayName;
         return author;
       },
       price: item => {
@@ -710,6 +729,11 @@ class wmCollectionCarousel {
     this.swiperWrapper = swiperWrapper;
     swiperWrapper.className = "swiper-wrapper";
 
+    if (this.siteJson){
+      this.siteJson.pagePadding ? swiperContainer.style.setProperty('--wm-cc-page-padding', this.siteJson.pagePadding) : null;
+      this.siteJson.maxPageWidth ? swiperContainer.style.setProperty('--wm-cc-max-page-width', this.siteJson.maxPageWidth) : null;
+    }
+
     /* If type is event, only add events with item.upcoming set to true */
     if (this.type === "event" && this.settings.events === "upcoming") {
       this.items = this.items.filter(item => item.upcoming);
@@ -720,7 +744,6 @@ class wmCollectionCarousel {
     const builders = this.build();
 
     // Create slides for each item
-    console.log(this.settings.limit);
     this.items.forEach((item, index) => {
       if (index >= this.settings.limit) return;
 
@@ -891,6 +914,7 @@ class wmCollectionCarousel {
       slide.appendChild(content);
       swiperWrapper.appendChild(slide);
     });
+    swiperContainer.appendChild(swiperWrapper);
 
     /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
     if (
@@ -931,6 +955,7 @@ class wmCollectionCarousel {
 
       navigationWrapper.appendChild(prevButtonWrapper);
       navigationWrapper.appendChild(nextButtonWrapper);
+      swiperContainer.appendChild(this.navigationWrapper);
     }
 
     if (this.settings.pagination) {
@@ -942,16 +967,14 @@ class wmCollectionCarousel {
       paginationWrapper.className = "pagination-wrapper";
 
       pagination.appendChild(paginationWrapper);
+      swiperContainer.appendChild(this.pagination);
+    }
+
+    if (this.settings.navigationLayout.includes("bottom")) {
+      this.navigationWrapper.append(this.pagination);
     }
 
     // Assemble final structure
-    swiperContainer.appendChild(swiperWrapper);
-    if (this.settings.navigation) {
-      swiperContainer.appendChild(this.navigationWrapper);
-    }
-    if (this.settings.pagination) {
-      swiperContainer.appendChild(this.pagination);
-    }
   }
 
   async getCollectionData() {
