@@ -2,6 +2,7 @@ class wmCollectionCarousel {
   static get defaultSettings() {
     const freeMode = false;
     return {
+      id: null,
       layout: "full-width", // header-adapt or folder
       fullWidth: false,
       speed: 300,
@@ -76,7 +77,7 @@ class wmCollectionCarousel {
       },
     };
   }
-  static getSwiperConfig(settings) {
+  static getSwiperConfig(settings, container) {
     // Helper function to handle slide width settings
     const handleSlideWidth = value => {
       if (settings.fullWidth && value === 1) {
@@ -177,6 +178,12 @@ class wmCollectionCarousel {
       swiper.update();
     };
 
+    const updateNavigationHeight = swiper => {
+      if (!swiper) return;
+      const image = swiper.el.querySelector(".swiper-slide-active img");
+      container.style.setProperty('--wm-cc-navigation-height', `${image.offsetHeight}px`);
+    };
+
     return {
       slidesPerView: mainView.slidesPerView,
       slidesPerGroup: parseInt(settings.slidesPerGroup || 1),
@@ -214,12 +221,12 @@ class wmCollectionCarousel {
         : false,
       navigation: {
         enabled: settings.navigation,
-        nextEl: ".navigation-button-next",
-        prevEl: settings.freeMode ? ".navigation-button-prev.asdf" : ".navigation-button-prev", // basically preventing the event listeners from mounting if free mode is enabled
+        nextEl: `#${settings.id} .navigation-button-next`,
+        prevEl: settings.freeMode ? `#${settings.id} .navigation-button-prev.asdf` : `#${settings.id} .navigation-button-prev`, // basically preventing the event listeners from mounting if free mode is enabled
       },
       pagination: {
         enabled: settings.pagination,
-        el: ".collection-carousel-pagination .pagination-wrapper",
+        el: `#${settings.id} .collection-carousel-pagination .pagination-wrapper`,
         clickable: true,
         type: settings.paginationType,
         dynamicBullets: settings.dynamicBullets,
@@ -269,7 +276,13 @@ class wmCollectionCarousel {
           window.addEventListener("resize", () => {
             updateSwiperOffsets(swiper);
             updateSlideWidths(swiper);
+            if (settings.navigationLayout === "overlay image" || settings.navigationLayout === "overlay images") {
+              updateNavigationHeight(swiper);
+            }
           });
+          if (settings.navigationLayout === "overlay image" || settings.navigationLayout === "overlay images") {
+            updateNavigationHeight(swiper);
+          }
 
           swiper.el.addEventListener("mousemove", () => {
             if (settings.freeMode) {
@@ -291,7 +304,7 @@ class wmCollectionCarousel {
             // Custom prev button event
             
             const prevButton = swiper.el.querySelector(
-              ".navigation-button-prev button"
+              `#${settings.id} .navigation-button-prev button`
             );
             prevButton?.addEventListener("click", () => {
               const swiper = this;
@@ -472,6 +485,12 @@ class wmCollectionCarousel {
       wmCollectionCarousel.userSettings,
       wmCollectionCarousel.instanceSettings(el)
     );
+    if (!this.el.id) {
+      this.el.id = `wm-carousel-${Math.random().toString(36).substr(2, 9)}`;
+      this.settings.id = this.el.id;
+    } else {
+      this.settings.id = this.el.id;
+    }
 
     this.init();
   }
@@ -489,8 +508,8 @@ class wmCollectionCarousel {
 
     this.buildStructure();
     this.swiper = new wmCollectionCarousel.Swiper(
-      this.el,
-      wmCollectionCarousel.getSwiperConfig(this.settings)
+      this.swiperContainer,
+      wmCollectionCarousel.getSwiperConfig(this.settings, this.el)
     );
     wmCollectionCarousel.emitEvent("wmCollectionCarousel:ready", self);
   }
@@ -721,7 +740,9 @@ class wmCollectionCarousel {
   }
   buildStructure() {
     // Create main swiper container
-    const swiperContainer = this.el;
+    
+    const swiperContainer = document.createElement("div");
+    this.swiperContainer = swiperContainer;
     swiperContainer.className = "swiper collection-carousel";
 
     // Create wrapper for slides
@@ -915,6 +936,7 @@ class wmCollectionCarousel {
       swiperWrapper.appendChild(slide);
     });
     swiperContainer.appendChild(swiperWrapper);
+    this.el.appendChild(swiperContainer);
 
     /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
     if (
@@ -955,7 +977,7 @@ class wmCollectionCarousel {
 
       navigationWrapper.appendChild(prevButtonWrapper);
       navigationWrapper.appendChild(nextButtonWrapper);
-      swiperContainer.appendChild(this.navigationWrapper);
+      this.el.appendChild(this.navigationWrapper);
     }
 
     if (this.settings.pagination) {
@@ -967,14 +989,12 @@ class wmCollectionCarousel {
       paginationWrapper.className = "pagination-wrapper";
 
       pagination.appendChild(paginationWrapper);
-      swiperContainer.appendChild(this.pagination);
+      this.el.appendChild(this.pagination);
     }
 
     if (this.settings.navigationLayout.includes("bottom")) {
       this.navigationWrapper.append(this.pagination);
     }
-
-    // Assemble final structure
   }
 
   async getCollectionData() {
