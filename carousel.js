@@ -303,9 +303,10 @@ class wmCollectionCarousel {
           if (settings.freeMode && settings.navigation) {
             // Custom prev button event
             
-            const prevButton = swiper.el.querySelector(
+            const prevButton = container.querySelector(
               `#${settings.id} .navigation-button-prev button`
             );
+
             prevButton?.addEventListener("click", () => {
               const swiper = this;
               const {
@@ -751,8 +752,8 @@ class wmCollectionCarousel {
     swiperWrapper.className = "swiper-wrapper";
 
     if (this.siteJson){
-      this.siteJson.pagePadding ? swiperContainer.style.setProperty('--wm-cc-page-padding', this.siteJson.pagePadding) : null;
-      this.siteJson.maxPageWidth ? swiperContainer.style.setProperty('--wm-cc-max-page-width', this.siteJson.maxPageWidth) : null;
+      this.siteJson.pagePadding ? this.el.style.setProperty('--wm-cc-page-padding', this.siteJson.pagePadding) : null;
+      this.siteJson.maxPageWidth ? this.el.style.setProperty('--wm-cc-max-page-width', this.siteJson.maxPageWidth) : null;
     }
 
     /* If type is event, only add events with item.upcoming set to true */
