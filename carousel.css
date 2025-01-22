@@ -1116,7 +1116,7 @@ html:has([data-wm-plugin="collection-carousel"]) {
   justify-content: center;
   pointer-events: auto;
   align-items: center;
-  padding-top: 17px;
+  padding-top: var(--wm-cc-pagination-top-padding, 17px);
 }
 
 [data-wm-plugin="collection-carousel"] .pagination-wrapper {
@@ -1168,7 +1168,6 @@ html:has([data-wm-plugin="collection-carousel"]) {
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
-  padding: 0px var(--wm-cc-page-padding, 17px);
 }
 
 [data-wm-plugin="collection-carousel"] .navigation-button-next,
@@ -1257,6 +1256,12 @@ html:has([data-wm-plugin="collection-carousel"]) {
   box-sizing: border-box;
 }
 
+[data-wm-plugin="collection-carousel"][data-full-width="true"]
+  .navigation-wrapper {
+  padding-left: var(--wm-cc-page-padding, 2vw);
+  padding-right: var(--wm-cc-page-padding, 2vw);
+}
+
 /* Navigation Layout -- TOP */
 [data-wm-plugin="collection-carousel"][data-navigation-layout*="top"]
   .navigation-wrapper {
@@ -1296,12 +1301,6 @@ html:has([data-wm-plugin="collection-carousel"]) {
   gap: var(--wm-cc-navigation-spacing, 17px);
   padding-top: var(--wm-cc-navigation-top-padding, 17px);
   align-items: center;
-}
-
-[data-wm-plugin="collection-carousel"][data-full-width="true"]
-  .navigation-wrapper {
-  padding-left: var(--wm-cc-page-padding, 2vw);
-  padding-right: var(--wm-cc-page-padding, 2vw);
 }
 
 [data-wm-plugin="collection-carousel"][data-navigation-layout*="bottom"]
@@ -1374,9 +1373,26 @@ html:has([data-wm-plugin="collection-carousel"]) {
 }
 
 /* Navigation Layout -- OVERLAY */
+[data-wm-plugin="collection-carousel"][data-navigation-layout="overlay"]
+  .navigation-wrapper {
+  padding-left: var(--wm-cc-navigation-overlay-padding, 2vw);
+  padding-right: var(--wm-cc-navigation-overlay-padding, 2vw);
+  height: calc(
+    var(--wm-cc-navigation-height, 100%) -
+      (
+        var(--wm-cc-pagination-top-padding, 17px) +
+          var(--swiper-pagination-bullet-size, 8px)
+      )
+  );
+}
+
 [data-wm-plugin="collection-carousel"][data-navigation-layout="overlay image"]
   .navigation-wrapper,
 [data-wm-plugin="collection-carousel"][data-navigation-layout="overlay images"]
   .navigation-wrapper {
-  height: var(--wm-cc-navigation-height, 100%);
+  padding-left: var(--wm-cc-navigation-overlay-padding, 2vw);
+  padding-right: var(--wm-cc-navigation-overlay-padding, 2vw);
+  height: calc(
+    var(--wm-cc-navigation-height, 100%) + (2 * var(--wm-cc-border-width, 0px))
+  );
 }
