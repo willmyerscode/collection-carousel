@@ -1251,10 +1251,6 @@ html:has([data-wm-plugin="collection-carousel"]) {
     --wm-cc-arrow-size: 20px;
     --wm-cc-arrow-background-size: 40px;
   }
-
-  [data-wm-plugin="collection-carousel"] .navigation-wrapper {
-    padding: 4vw 6vw;
-  }
 }
 
 .page-section .content-wrapper:has([data-wm-plugin="collection-carousel"]) {
