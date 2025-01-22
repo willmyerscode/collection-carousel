@@ -870,14 +870,16 @@ html:has([data-wm-plugin="collection-carousel"]) {
 [data-wm-plugin="collection-carousel"] {
   --swiper-pagination-bottom: 0px;
   --swiper-pagination-top: 0px;
+  display: flex;
+  flex-direction: column;
 }
 
 [data-wm-plugin="collection-carousel"] .swiper {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y pinch-zoom;
-  display: flex;
-  flex-direction: column;
+  min-width: 0px;
+  width: 100%;
 }
 
 [data-wm-plugin="collection-carousel"] .swiper-wrapper {
