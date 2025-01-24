@@ -1001,7 +1001,7 @@ class wmCollectionCarousel {
       this.el.appendChild(this.pagination);
     }
 
-    if (this.settings.navigationLayout.includes("bottom")) {
+    if (this.settings.navigationLayout.includes("bottom") && this.settings.pagination) {
       this.navigationWrapper.append(this.pagination);
     }
   }
