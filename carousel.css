@@ -1129,28 +1129,25 @@ html:has([data-wm-plugin="collection-carousel"]) {
 [data-wm-plugin="collection-carousel"] .pagination-wrapper > * {
   margin: 0 var(--pagination-gap, 17px);
 }
+
 [data-wm-plugin="collection-carousel"]
   .pagination-wrapper
   .swiper-pagination-bullet {
-  opacity: var(--pagination-bullet-inactive-opacity, 0.5);
+  width: var(--wm-cc-bullet-size, 8px);
+  height: var(--wm-cc-bullet-size, 8px);
+  opacity: var(--wm-cc-inactive-bullet-opacity, 0.5);
   background-color: var(
-    --pagination-bullet-inactive-background-color,
-    var(
-      --pagination-background-color,
-      var(--list-section-carousel-arrow-background-color, black)
-    )
+    --wm-cc-inactive-bullet-color,
+    var(--list-section-carousel-arrow-background-color, black)
   );
 }
 [data-wm-plugin="collection-carousel"]
   .pagination-wrapper
   .swiper-pagination-bullet-active {
-  opacity: var(--pagination-bullet-active-opacity, 1);
+  opacity: var(--wm-cc-active-bullet-opacity, 1);
   background-color: var(
-    --pagination-bullet-active-background-color,
-    var(
-      --pagination-background-color,
-      var(--list-section-carousel-arrow-background-color, black)
-    )
+    --wm-cc-active-bullet-color,
+    var(--list-section-carousel-arrow-background-color, black)
   );
 }
 
