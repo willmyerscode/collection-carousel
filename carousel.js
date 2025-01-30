@@ -11,6 +11,7 @@ class wmCollectionCarousel {
       cacheCollections: false,
       cacheDuration: 0, // minutes
       clickthrough: true,
+      newWindow: false,
       thumbnail: true,
       price: true,
       eventDates: true,
@@ -800,7 +801,8 @@ class wmCollectionCarousel {
         if (this.settings.clickthrough) {
           const imageLink = document.createElement("a");
           imageLink.className = "slide-thumbnail-link";
-          imageLink.href = item.fullUrl;
+          imageLink.href = item.passthrough ? item.sourceUrl : item.fullUrl;
+          imageLink.target = this.settings.newWindow ? "_blank" : "_self";
           imageContainer.appendChild(image);
           imageContainer.appendChild(imageLink);
         } else {
@@ -827,7 +829,8 @@ class wmCollectionCarousel {
         const titleContent = document.createElement("h3");
         if (this.settings.clickthrough) {
           const titleLink = document.createElement("a");
-          titleLink.href = item.fullUrl;
+          titleLink.href = item.passthrough ? item.sourceUrl : item.fullUrl;
+          titleLink.target = this.settings.newWindow ? "_blank" : "_self";
           titleLink.innerHTML = item.title;
           titleContent.appendChild(titleLink);
         } else {
