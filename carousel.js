@@ -238,7 +238,7 @@ class wmCollectionCarousel {
         0: {
           slidesPerView: smView.slidesPerView,
           spaceBetween: parseInt(
-            settings.spaceBetweenSm || settings.spaceBetween
+            settings.spaceBetweenSm ?? settings.spaceBetween
           ),
           slidesPerGroup: parseInt(
             settings.slidesPerGroupSm || settings.slidesPerGroup
@@ -247,7 +247,7 @@ class wmCollectionCarousel {
         768: {
           slidesPerView: mdView.slidesPerView,
           spaceBetween: parseInt(
-            settings.spaceBetweenMd || settings.spaceBetween
+            settings.spaceBetweenMd ?? settings.spaceBetween
           ),
           slidesPerGroup: parseInt(
             settings.slidesPerGroupMd || settings.slidesPerGroup
@@ -256,7 +256,7 @@ class wmCollectionCarousel {
         1024: {
           slidesPerView: lgView.slidesPerView,
           spaceBetween: parseInt(
-            settings.spaceBetweenLg || settings.spaceBetween
+            settings.spaceBetweenLg ?? settings.spaceBetween
           ),
           slidesPerGroup: parseInt(
             settings.slidesPerGroupLg || settings.slidesPerGroup
@@ -428,6 +428,11 @@ class wmCollectionCarousel {
       el.dataset.dynamicBullets = true;
       el.dataset.dynamicMainBullets = el.dataset.dynamicBullets;
     }
+    if (el.dataset.spaceBetween) {
+      el.dataset.spaceBetweenSm = el.dataset.spaceBetweenSm ? parseInt(el.dataset.spaceBetweenSm) : parseInt(el.dataset.spaceBetween);
+      el.dataset.spaceBetweenMd = el.dataset.spaceBetweenMd ? parseInt(el.dataset.spaceBetweenMd) : parseInt(el.dataset.spaceBetween);
+      el.dataset.spaceBetweenLg = el.dataset.spaceBetweenLg ? parseInt(el.dataset.spaceBetweenLg) : parseInt(el.dataset.spaceBetween);
+    }
     if (el.dataset.autoplay) {
       const number = parseInt(el.dataset.autoplay);
       if (number < 10 && number > 0) {
@@ -512,9 +517,10 @@ class wmCollectionCarousel {
     this.siteJson = window.Static?.SQUARESPACE_CONTEXT?.tweakJSON || {};
 
     this.buildStructure();
+    this.swiperSettings = wmCollectionCarousel.getSwiperConfig(this.settings, this.el);
     this.swiper = new wmCollectionCarousel.Swiper(
       this.swiperContainer,
-      wmCollectionCarousel.getSwiperConfig(this.settings, this.el)
+      this.swiperSettings
     );
     wmCollectionCarousel.emitEvent("wmCollectionCarousel:ready", self);
     this.el.wmCollectionCarousel = {
