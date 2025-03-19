@@ -439,6 +439,10 @@ class wmCollectionCarousel {
         el.dataset.autoplay = number * 1000;
       }
     }
+    if (!el.dataset.navigation && el.dataset.navigationLayout === "false") {
+      el.dataset.navigation = "false";
+      el.dataset.navigationLayout = null;
+    }
     if (!el.dataset.navigationLayout && el.dataset.navigation !== "false") {
       el.dataset.navigationLayout = "overlay";
     }
