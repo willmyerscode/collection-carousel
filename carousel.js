@@ -64,6 +64,7 @@ class wmCollectionCarousel {
       effect: null,
       coverflowRotate: 0,
       coverflowScale: 1,
+      wmPopups: false,
       coverflowSlideShadows: false,
       eventDateFormat: {
         showYear: true,
@@ -811,7 +812,10 @@ class wmCollectionCarousel {
         if (this.settings.clickthrough) {
           const imageLink = document.createElement("a");
           imageLink.className = "slide-thumbnail-link";
-          imageLink.href = item.passthrough ? item.sourceUrl : item.fullUrl;
+          imageLink.href = this.settings.wmPopups ? 
+            `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}` : 
+            (item.passthrough ? item.sourceUrl : item.fullUrl);
+
           imageLink.target = this.settings.newWindow ? "_blank" : "_self";
           imageContainer.appendChild(image);
           imageContainer.appendChild(imageLink);
@@ -840,6 +844,10 @@ class wmCollectionCarousel {
         if (this.settings.clickthrough) {
           const titleLink = document.createElement("a");
           titleLink.href = item.passthrough ? item.sourceUrl : item.fullUrl;
+          titleLink.href = this.settings.wmPopups ? 
+            `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}` : 
+            (item.passthrough ? item.sourceUrl : item.fullUrl);
+
           titleLink.target = this.settings.newWindow ? "_blank" : "_self";
           titleLink.innerHTML = item.title;
           titleContent.appendChild(titleLink);
