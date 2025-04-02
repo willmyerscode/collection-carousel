@@ -25,15 +25,7 @@ class wmCollectionCarousel {
       metadataDelimiter: "|",
       categoriesDelimiter: ", ",
       tagsDelimiter: ", ",
-      contentOrder: [
-        "metadataAboveTitle",
-        "title",
-        "metadataBelowTitle",
-        "price",
-        "eventDates",
-        "excerpt",
-        "metadataBelowExcerpt",
-      ],
+      contentOrder: ["metadataAboveTitle", "title", "metadataBelowTitle", "price", "eventDates", "excerpt", "metadataBelowExcerpt"],
       slidesPerView: "auto",
       slidesPerGroup: 1,
       spaceBetween: 30,
@@ -66,6 +58,22 @@ class wmCollectionCarousel {
       coverflowScale: 1,
       wmPopups: false,
       coverflowSlideShadows: false,
+      creative: {
+        limitProgress: 3,
+        progressMultiplier: 1,
+        prev: {
+          opacity: 0.75,
+          translate: ["-110%", 0, 0],
+          scale: 0.9,
+          rotate: [10, -10, 0],
+        },
+        next: {
+          opacity: 0.75,
+          translate: ["110%", 0, 0],
+          scale: 0.9,
+          rotate: [10, 10, 0],
+        },
+      },
       eventDateFormat: {
         showYear: true,
         timeFormat: "12", // '12' or '24'
@@ -90,10 +98,7 @@ class wmCollectionCarousel {
         };
       }
 
-      if (
-        typeof value === "string" &&
-        value.match(/\d+(\.\d+)?(px|rem|em|vw|%)/)
-      ) {
+      if (typeof value === "string" && value.match(/\d+(\.\d+)?(px|rem|em|vw|%)/)) {
         return {
           slidesPerView: "auto",
           width: value,
@@ -107,15 +112,9 @@ class wmCollectionCarousel {
 
     // Process all breakpoint values
     let mainView = handleSlideWidth(settings.slidesPerView);
-    let smView = handleSlideWidth(
-      settings.slidesPerViewSm || settings.slidesPerView
-    );
-    let mdView = handleSlideWidth(
-      settings.slidesPerViewMd || settings.slidesPerView
-    );
-    let lgView = handleSlideWidth(
-      settings.slidesPerViewLg || settings.slidesPerView
-    );
+    let smView = handleSlideWidth(settings.slidesPerViewSm || settings.slidesPerView);
+    let mdView = handleSlideWidth(settings.slidesPerViewMd || settings.slidesPerView);
+    let lgView = handleSlideWidth(settings.slidesPerViewLg || settings.slidesPerView);
 
     // Create resize handler
     const updateSwiperOffsets = swiper => {
@@ -148,15 +147,9 @@ class wmCollectionCarousel {
       if (!swiper) return;
 
       mainView = handleSlideWidth(settings.slidesPerView);
-      smView = handleSlideWidth(
-        settings.slidesPerViewSm || settings.slidesPerView
-      );
-      mdView = handleSlideWidth(
-        settings.slidesPerViewMd || settings.slidesPerView
-      );
-      lgView = handleSlideWidth(
-        settings.slidesPerViewLg || settings.slidesPerView
-      );
+      smView = handleSlideWidth(settings.slidesPerViewSm || settings.slidesPerView);
+      mdView = handleSlideWidth(settings.slidesPerViewMd || settings.slidesPerView);
+      lgView = handleSlideWidth(settings.slidesPerViewLg || settings.slidesPerView);
 
       const width = window.innerWidth;
       let currentView;
@@ -184,7 +177,7 @@ class wmCollectionCarousel {
     const updateNavigationHeight = swiper => {
       if (!swiper) return;
       const image = swiper.el.querySelector(".swiper-slide-active img");
-      container.style.setProperty('--wm-cc-navigation-height', `${image.offsetHeight}px`);
+      container.style.setProperty("--wm-cc-navigation-height", `${image.offsetHeight}px`);
     };
 
     return {
@@ -200,6 +193,22 @@ class wmCollectionCarousel {
         rotate: settings.coverflowRotate,
         scale: settings.coverflowScale,
         slideShadows: settings.coverflowSlideShadows,
+      },
+      creativeEffect: {
+        limitProgress: settings.creative.limitProgress,
+        progressMultiplier: settings.creative.progressMultiplier,
+        prev: {
+          opacity: settings.creative.prev.opacity,
+          translate: settings.creative.prev.translate,
+          scale: settings.creative.prev.scale,
+          rotate: settings.creative.prev.rotate,
+        },
+        next: {
+          opacity: settings.creative.next.opacity,
+          translate: settings.creative.next.translate,
+          scale: settings.creative.next.scale,
+          rotate: settings.creative.next.rotate,
+        },
       },
       freeMode: {
         enabled: settings.freeMode,
@@ -238,30 +247,18 @@ class wmCollectionCarousel {
       breakpoints: {
         0: {
           slidesPerView: smView.slidesPerView,
-          spaceBetween: parseInt(
-            settings.spaceBetweenSm ?? settings.spaceBetween
-          ),
-          slidesPerGroup: parseInt(
-            settings.slidesPerGroupSm || settings.slidesPerGroup
-          ),
+          spaceBetween: parseInt(settings.spaceBetweenSm ?? settings.spaceBetween),
+          slidesPerGroup: parseInt(settings.slidesPerGroupSm || settings.slidesPerGroup),
         },
         768: {
           slidesPerView: mdView.slidesPerView,
-          spaceBetween: parseInt(
-            settings.spaceBetweenMd ?? settings.spaceBetween
-          ),
-          slidesPerGroup: parseInt(
-            settings.slidesPerGroupMd || settings.slidesPerGroup
-          ),
+          spaceBetween: parseInt(settings.spaceBetweenMd ?? settings.spaceBetween),
+          slidesPerGroup: parseInt(settings.slidesPerGroupMd || settings.slidesPerGroup),
         },
         1024: {
           slidesPerView: lgView.slidesPerView,
-          spaceBetween: parseInt(
-            settings.spaceBetweenLg ?? settings.spaceBetween
-          ),
-          slidesPerGroup: parseInt(
-            settings.slidesPerGroupLg || settings.slidesPerGroup
-          ),
+          spaceBetween: parseInt(settings.spaceBetweenLg ?? settings.spaceBetween),
+          slidesPerGroup: parseInt(settings.slidesPerGroupLg || settings.slidesPerGroup),
         },
       },
       on: {
@@ -305,21 +302,12 @@ class wmCollectionCarousel {
           // Removed the cssMode property
           if (settings.freeMode && settings.navigation) {
             // Custom prev button event
-            
-            const prevButton = container.querySelector(
-              `#${settings.id} .navigation-button-prev button`
-            );
+
+            const prevButton = container.querySelector(`#${settings.id} .navigation-button-prev button`);
 
             prevButton?.addEventListener("click", () => {
               const swiper = this;
-              const {
-                params,
-                snapGrid,
-                slidesGrid,
-                rtlTranslate,
-                enabled,
-                animating,
-              } = swiper;
+              const {params, snapGrid, slidesGrid, rtlTranslate, enabled, animating} = swiper;
               if (!enabled || swiper.destroyed) return swiper;
 
               let speed = swiper.params.speed;
@@ -333,16 +321,13 @@ class wmCollectionCarousel {
               const isVirtual = swiper.virtual && params.virtual.enabled;
 
               if (params.loop) {
-                if (animating && !isVirtual && params.loopPreventsSliding)
-                  return false;
+                if (animating && !isVirtual && params.loopPreventsSliding) return false;
 
                 swiper.loopFix({direction: "prev"});
                 // eslint-disable-next-line
                 swiper._clientLeft = swiper.wrapperEl.clientLeft;
               }
-              const translate = rtlTranslate
-                ? swiper.translate
-                : -swiper.translate;
+              const translate = rtlTranslate ? swiper.translate : -swiper.translate;
 
               function normalize(val) {
                 if (val < 0) return -Math.floor(Math.abs(val));
@@ -351,8 +336,7 @@ class wmCollectionCarousel {
               const normalizedTranslate = normalize(translate);
               const normalizedSnapGrid = snapGrid.map(val => normalize(val));
 
-              let prevSnap =
-                snapGrid[normalizedSnapGrid.indexOf(normalizedTranslate) - 1];
+              let prevSnap = snapGrid[normalizedSnapGrid.indexOf(normalizedTranslate) - 1];
               if (typeof prevSnap === "undefined") {
                 let prevSnapIndex;
                 snapGrid.forEach((snap, snapIndex) => {
@@ -362,35 +346,20 @@ class wmCollectionCarousel {
                   }
                 });
                 if (typeof prevSnapIndex !== "undefined") {
-                  prevSnap =
-                    snapGrid[
-                      prevSnapIndex > 0 ? prevSnapIndex - 1 : prevSnapIndex
-                    ];
+                  prevSnap = snapGrid[prevSnapIndex > 0 ? prevSnapIndex - 1 : prevSnapIndex];
                 }
               }
               let prevIndex = 0;
               if (typeof prevSnap !== "undefined") {
                 prevIndex = slidesGrid.indexOf(prevSnap);
                 if (prevIndex < 0) prevIndex = swiper.activeIndex - 1;
-                if (
-                  params.slidesPerView === "auto" &&
-                  params.slidesPerGroup === 1 &&
-                  params.slidesPerGroupAuto
-                ) {
-                  prevIndex =
-                    prevIndex -
-                    swiper.slidesPerViewDynamic("previous", true) +
-                    1;
+                if (params.slidesPerView === "auto" && params.slidesPerGroup === 1 && params.slidesPerGroupAuto) {
+                  prevIndex = prevIndex - swiper.slidesPerViewDynamic("previous", true) + 1;
                   prevIndex = Math.max(prevIndex, 0);
                 }
               }
               if (params.rewind && swiper.isBeginning) {
-                const lastIndex =
-                  swiper.params.virtual &&
-                  swiper.params.virtual.enabled &&
-                  swiper.virtual
-                    ? swiper.virtual.slides.length - 1
-                    : swiper.slides.length - 1;
+                const lastIndex = swiper.params.virtual && swiper.params.virtual.enabled && swiper.virtual ? swiper.virtual.slides.length - 1 : swiper.slides.length - 1;
                 return swiper.slideTo(lastIndex, speed, runCallbacks, internal);
               } else if (params.loop && swiper.activeIndex === 0) {
                 requestAnimationFrame(() => {
@@ -415,9 +384,7 @@ class wmCollectionCarousel {
       el.dataset.mousewheel = el.dataset.freeMode;
     }
     if (!el.dataset.fullWidth) {
-      el.offsetWidth === window.innerWidth
-        ? (el.dataset.fullWidth = true)
-        : (el.dataset.fullWidth = false);
+      el.offsetWidth === window.innerWidth ? (el.dataset.fullWidth = true) : (el.dataset.fullWidth = false);
     }
     if (el.dataset.effect === "coverflow" && !el.dataset.centeredSlides) {
       el.dataset.centeredSlides = true;
@@ -448,16 +415,58 @@ class wmCollectionCarousel {
       el.dataset.navigationLayout = "overlay";
     }
 
+    if (el.dataset.effect === "creative-coverflow") {
+      el.dataset.effect = "creative";
+      const creative = {
+        limitProgress: 3,
+        progressMultiplier: 1,
+        prev: {
+          opacity: 0.75,
+          translate: ["-110%", 0, 0],
+          scale: 0.9,
+          rotate: [0, -10, 0],
+        },
+        next: {
+          opacity: 0.75,
+          translate: ["110%", 0, 0],
+          scale: 0.9,
+          rotate: [0, 10, 0],
+        },
+      };
+      el.dataset.creative = JSON.stringify(creative);
+    }
+
     function parseAttr(string) {
       if (string === "true") return true;
       if (string === "false") return false;
       const number = parseFloat(string);
       if (!isNaN(number) && number.toString() === string) return number;
+
+      // Try to parse JSON if string starts with { or [
+      if (typeof string === "string" && (string.trim().startsWith("{") || string.trim().startsWith("["))) {
+        try {
+          const parsed = JSON.parse(string);
+          // Uncomment to debug JSON parsing
+          // console.log("Successfully parsed JSON attribute:", string, "->", parsed);
+          return parsed;
+        } catch (e) {
+          console.warn("Failed to parse JSON from attribute:", string);
+        }
+      }
+
       return string;
     }
 
     // Function to set value in a nested object based on key path
     const setNestedProperty = (obj, keyPath, value) => {
+      // If the value is already a parsed object/array and we're at the top level,
+      // we can assign directly without splitting
+      const parsedValue = parseAttr(value);
+      if (typeof parsedValue === "object" && parsedValue !== null && !Array.isArray(parsedValue) && !keyPath.includes("__")) {
+        obj[keyPath] = parsedValue;
+        return;
+      }
+
       const keys = keyPath.split("__");
       let current = obj;
 
@@ -475,31 +484,20 @@ class wmCollectionCarousel {
     }
 
     if (dataAttributes.metadataBelowExcerpt) {
-      dataAttributes.metadataBelowExcerpt = dataAttributes.metadataBelowExcerpt
-        .split(",")
-        .map(item => item.trim().toLowerCase());
+      dataAttributes.metadataBelowExcerpt = dataAttributes.metadataBelowExcerpt.split(",").map(item => item.trim().toLowerCase());
     }
     if (dataAttributes.metadataAboveTitle) {
-      dataAttributes.metadataAboveTitle = dataAttributes.metadataAboveTitle
-        .split(",")
-        .map(item => item.trim().toLowerCase());
+      dataAttributes.metadataAboveTitle = dataAttributes.metadataAboveTitle.split(",").map(item => item.trim().toLowerCase());
     }
     if (dataAttributes.metadataBelowTitle) {
-      dataAttributes.metadataBelowTitle = dataAttributes.metadataBelowTitle
-        .split(",")
-        .map(item => item.trim().toLowerCase());
+      dataAttributes.metadataBelowTitle = dataAttributes.metadataBelowTitle.split(",").map(item => item.trim().toLowerCase());
     }
 
     return dataAttributes;
   }
   constructor(el) {
     this.el = el;
-    this.settings = wmCollectionCarousel.deepMerge(
-      {},
-      wmCollectionCarousel.defaultSettings,
-      wmCollectionCarousel.userSettings,
-      wmCollectionCarousel.instanceSettings(el)
-    );
+    this.settings = wmCollectionCarousel.deepMerge({}, wmCollectionCarousel.defaultSettings, wmCollectionCarousel.userSettings, wmCollectionCarousel.instanceSettings(el));
     if (!this.el.id) {
       this.el.id = `wm-carousel-${Math.random().toString(36).substr(2, 9)}`;
       this.settings.id = this.el.id;
@@ -523,16 +521,13 @@ class wmCollectionCarousel {
 
     this.buildStructure();
     this.swiperSettings = wmCollectionCarousel.getSwiperConfig(this.settings, this.el);
-    this.swiper = new wmCollectionCarousel.Swiper(
-      this.swiperContainer,
-      this.swiperSettings
-    );
+    this.swiper = new wmCollectionCarousel.Swiper(this.swiperContainer, this.swiperSettings);
     wmCollectionCarousel.emitEvent("wmCollectionCarousel:ready", self);
     this.el.wmCollectionCarousel = {
       settings: this.settings,
       swiper: this.swiper,
       items: this.items,
-    }
+    };
   }
   build() {
     return {
@@ -549,26 +544,17 @@ class wmCollectionCarousel {
           .map(
             (tag, index, array) => `
                 <li>
-                    <span class="tag" rel="tag">${tag}${
-              index < array.length - 1 && this.settings.tagsDelimiter === ", "
-                ? `<span class="tag-delimiter">,</span>`
-                : ""
-            }</span>
+                    <span class="tag" rel="tag">${tag}${index < array.length - 1 && this.settings.tagsDelimiter === ", " ? `<span class="tag-delimiter">,</span>` : ""}</span>
                 </li>
             `
           )
-          .join(
-            this.settings.tagsDelimiter === ", "
-              ? " "
-              : `<span class="tag-delimiter">${this.settings.tagsDelimiter}</span>`
-          );
+          .join(this.settings.tagsDelimiter === ", " ? " " : `<span class="tag-delimiter">${this.settings.tagsDelimiter}</span>`);
 
         tags.appendChild(tagList);
         return tags;
       },
       categories: item => {
-        if (!item?.categories?.length && !item?.categoriesFull?.length)
-          return null;
+        if (!item?.categories?.length && !item?.categoriesFull?.length) return null;
 
         const categories = document.createElement("div");
         categories.className = "categories metadata";
@@ -581,39 +567,21 @@ class wmCollectionCarousel {
             .map(
               (category, index, array) => `
               <li>
-                <span class="category" rel="category">${category}${
-                index < array.length - 1 &&
-                this.settings.categoriesDelimiter === ", "
-                  ? `<span class='category-delimiter'>,</span>`
-                  : ""
-              }</span>
+                <span class="category" rel="category">${category}${index < array.length - 1 && this.settings.categoriesDelimiter === ", " ? `<span class='category-delimiter'>,</span>` : ""}</span>
               </li>
             `
             )
-            .join(
-              this.settings.categoriesDelimiter === ", "
-                ? " "
-                : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`
-            );
+            .join(this.settings.categoriesDelimiter === ", " ? " " : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`);
         } else if (item.categoriesFull?.length) {
           categoryList.innerHTML = item.categoriesFull
             .map(
               (category, index, array) => `
               <li>
-                <span class="category" rel="category">${category.displayName}${
-                index < array.length - 1 &&
-                this.settings.categoriesDelimiter === ", "
-                  ? "<span class='category-delimiter'>,</span>"
-                  : ""
-              }</span>
+                <span class="category" rel="category">${category.displayName}${index < array.length - 1 && this.settings.categoriesDelimiter === ", " ? "<span class='category-delimiter'>,</span>" : ""}</span>
               </li>
             `
             )
-            .join(
-              this.settings.categoriesDelimiter === ", "
-                ? " "
-                : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`
-            );
+            .join(this.settings.categoriesDelimiter === ", " ? " " : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`);
         }
 
         categories.appendChild(categoryList);
@@ -637,10 +605,7 @@ class wmCollectionCarousel {
           minute: undefined,
         };
 
-        dateContent.innerHTML = publishDate.toLocaleString(
-          dateFormat.locale,  
-          options
-        );
+        dateContent.innerHTML = publishDate.toLocaleString(dateFormat.locale, options);
         return date;
       },
       publishdate: function (item) {
@@ -713,9 +678,7 @@ class wmCollectionCarousel {
               <span class="sale-price">${currencySymbol}${salePrice}</span>
             `;
           } else {
-            price.innerHTML = basePrice
-              ? `${pricePrefix}${currencySymbol}${basePrice}`
-              : "";
+            price.innerHTML = basePrice ? `${pricePrefix}${currencySymbol}${basePrice}` : "";
           }
         }
         return price;
@@ -750,9 +713,7 @@ class wmCollectionCarousel {
         };
 
         const sameDay = startDate.toDateString() === endDate.toDateString();
-        const dateString = sameDay
-          ? `${formatDate(startDate)} - ${formatDate(endDate, false)}`
-          : `${formatDate(startDate)} - ${formatDate(endDate)}`;
+        const dateString = sameDay ? `${formatDate(startDate)} - ${formatDate(endDate, false)}` : `${formatDate(startDate)} - ${formatDate(endDate)}`;
 
         eventDatesContent.innerHTML = dateString;
         return eventDates;
@@ -770,9 +731,9 @@ class wmCollectionCarousel {
     this.swiperWrapper = swiperWrapper;
     swiperWrapper.className = "swiper-wrapper";
 
-    if (this.siteJson){
-      this.siteJson.pagePadding ? this.el.style.setProperty('--wm-cc-page-padding', this.siteJson.pagePadding) : null;
-      this.siteJson.maxPageWidth ? this.el.style.setProperty('--wm-cc-max-page-width', this.siteJson.maxPageWidth) : null;
+    if (this.siteJson) {
+      this.siteJson.pagePadding ? this.el.style.setProperty("--wm-cc-page-padding", this.siteJson.pagePadding) : null;
+      this.siteJson.maxPageWidth ? this.el.style.setProperty("--wm-cc-max-page-width", this.siteJson.maxPageWidth) : null;
     }
 
     /* If type is event, only add events with item.upcoming set to true */
@@ -801,9 +762,7 @@ class wmCollectionCarousel {
         image.src = item.assetUrl;
         image.alt = item.title;
         if (item.mediaFocalPoint) {
-          image.style.objectPosition = `${item.mediaFocalPoint.x * 100}% ${
-            item.mediaFocalPoint.y * 100
-          }%`;
+          image.style.objectPosition = `${item.mediaFocalPoint.x * 100}% ${item.mediaFocalPoint.y * 100}%`;
         }
 
         image.style.objectFit = "cover";
@@ -812,9 +771,7 @@ class wmCollectionCarousel {
         if (this.settings.clickthrough) {
           const imageLink = document.createElement("a");
           imageLink.className = "slide-thumbnail-link";
-          imageLink.href = this.settings.wmPopups ? 
-            `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}` : 
-            (item.passthrough ? item.sourceUrl : item.fullUrl);
+          imageLink.href = this.settings.wmPopups ? `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}` : item.passthrough ? item.sourceUrl : item.fullUrl;
 
           imageLink.target = this.settings.newWindow ? "_blank" : "_self";
           imageContainer.appendChild(image);
@@ -844,9 +801,7 @@ class wmCollectionCarousel {
         if (this.settings.clickthrough) {
           const titleLink = document.createElement("a");
           titleLink.href = item.passthrough ? item.sourceUrl : item.fullUrl;
-          titleLink.href = this.settings.wmPopups ? 
-            `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}` : 
-            (item.passthrough ? item.sourceUrl : item.fullUrl);
+          titleLink.href = this.settings.wmPopups ? `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}` : item.passthrough ? item.sourceUrl : item.fullUrl;
 
           titleLink.target = this.settings.newWindow ? "_blank" : "_self";
           titleLink.innerHTML = item.title;
@@ -878,8 +833,7 @@ class wmCollectionCarousel {
 
       if (this.settings.metadataAboveTitle.length) {
         metadataAboveTitle = document.createElement("div");
-        metadataAboveTitle.className =
-          "content-metadata-above-title metadata-group";
+        metadataAboveTitle.className = "content-metadata-above-title metadata-group";
         let hasAddedElement = false;
 
         this.settings.metadataAboveTitle.forEach(metadata => {
@@ -900,8 +854,7 @@ class wmCollectionCarousel {
       }
       if (this.settings.metadataBelowTitle.length) {
         metadataBelowTitle = document.createElement("div");
-        metadataBelowTitle.className =
-          "content-metadata-below-title metadata-group";
+        metadataBelowTitle.className = "content-metadata-below-title metadata-group";
         let hasAddedElement = false;
 
         this.settings.metadataBelowTitle.forEach(metadata => {
@@ -922,8 +875,7 @@ class wmCollectionCarousel {
       }
       if (this.settings.metadataBelowExcerpt.length) {
         metadataBelowExcerpt = document.createElement("div");
-        metadataBelowExcerpt.className =
-          "content-metadata-below-excerpt metadata-group";
+        metadataBelowExcerpt.className = "content-metadata-below-excerpt metadata-group";
         let hasAddedElement = false;
 
         this.settings.metadataBelowExcerpt.forEach(metadata => {
@@ -943,22 +895,17 @@ class wmCollectionCarousel {
         });
       }
 
-      if (this.settings.thumbnail && imageContainer)
-        slide.appendChild(imageContainer);
+      if (this.settings.thumbnail && imageContainer) slide.appendChild(imageContainer);
 
       /* Add content based on the contentOrder array */
       this.settings.contentOrder.forEach(contentPiece => {
         if (contentPiece === "title" && title) content.appendChild(title);
         if (contentPiece === "price" && price) content.appendChild(price);
-        if (contentPiece === "eventDates" && eventDates)
-          content.appendChild(eventDates);
+        if (contentPiece === "eventDates" && eventDates) content.appendChild(eventDates);
         if (contentPiece === "excerpt" && excerpt) content.appendChild(excerpt);
-        if (contentPiece === "metadataAboveTitle" && metadataAboveTitle)
-          content.appendChild(metadataAboveTitle);
-        if (contentPiece === "metadataBelowTitle" && metadataBelowTitle)
-          content.appendChild(metadataBelowTitle);
-        if (contentPiece === "metadataBelowExcerpt" && metadataBelowExcerpt)
-          content.appendChild(metadataBelowExcerpt);
+        if (contentPiece === "metadataAboveTitle" && metadataAboveTitle) content.appendChild(metadataAboveTitle);
+        if (contentPiece === "metadataBelowTitle" && metadataBelowTitle) content.appendChild(metadataBelowTitle);
+        if (contentPiece === "metadataBelowExcerpt" && metadataBelowExcerpt) content.appendChild(metadataBelowExcerpt);
       });
 
       slide.appendChild(content);
@@ -966,7 +913,6 @@ class wmCollectionCarousel {
     });
     swiperContainer.appendChild(swiperWrapper);
     this.el.appendChild(swiperContainer);
-
 
     // Add navigation elements
     if (this.settings.navigation) {
@@ -1003,10 +949,7 @@ class wmCollectionCarousel {
     }
 
     /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
-    if (
-      this.settings.loop &&
-      this.settings.slidesPerViewLg + 2 >= this.items.length
-    ) {
+    if (this.settings.loop && this.settings.slidesPerViewLg + 2 >= this.items.length) {
       this.settings.slidesPerViewLg = this.items.length - 2;
     }
 
@@ -1072,13 +1015,10 @@ class wmCollectionCarousel {
 
     const getData = async path => {
       try {
-        const cacheBustedPath = path.includes("?")
-          ? `${path}&cb=${Date.now()}`
-          : `${path}?cb=${Date.now()}`;
+        const cacheBustedPath = path.includes("?") ? `${path}&cb=${Date.now()}` : `${path}?cb=${Date.now()}`;
 
         const response = await fetch(cacheBustedPath);
-        if (!response.ok)
-          throw new Error(`Fetch error: ${response.statusText}`);
+        if (!response.ok) throw new Error(`Fetch error: ${response.statusText}`);
         const json = await response.json();
 
         let currentItems = json.items;
@@ -1101,9 +1041,7 @@ class wmCollectionCarousel {
             currentItems.forEach(item => {
               item.categoriesFull = item.categoryIds
                 .map(categoryId => {
-                  const category = nestedCategories.categories.find(
-                    cat => cat.id === categoryId
-                  );
+                  const category = nestedCategories.categories.find(cat => cat.id === categoryId);
                   return category || null;
                 })
                 .filter(category => category);
@@ -1111,10 +1049,10 @@ class wmCollectionCarousel {
           }
         }
 
-        if (this.settings.featured){
+        if (this.settings.featured) {
+          console.log("filtering featured items");
           currentItems = currentItems.filter(item => item.starred);
         }
-
 
         items.push(...currentItems);
 
@@ -1124,9 +1062,7 @@ class wmCollectionCarousel {
         }
 
         if (json.pagination?.nextPage) {
-          await getData(
-            json.pagination.nextPageUrl + "&format=json&cb=" + Date.now()
-          );
+          await getData(json.pagination.nextPageUrl + "&format=json&cb=" + Date.now());
         }
         return {items, type};
       } catch (error) {
@@ -1148,7 +1084,7 @@ class wmCollectionCarousel {
           })
         );
       }
-    }
+    };
 
     try {
       const cacheKey = getCacheKey(sourceUrl);
@@ -8933,9 +8869,7 @@ class wmCollectionCarousel {
 
 (() => {
   function initCollectionCarousel() {
-    const els = document.querySelectorAll(
-      '[data-wm-plugin="collection-carousel"]:not([data-loading])'
-    );
+    const els = document.querySelectorAll('[data-wm-plugin="collection-carousel"]:not([data-loading])');
     if (!els.length) return;
     els.forEach(el => {
       el.dataset.loading = "loading";
