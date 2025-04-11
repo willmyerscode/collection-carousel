@@ -629,6 +629,7 @@ class wmCollectionCarousel {
         price.className = "price";
 
         // Currency symbol mapping
+
         const currencyMap = {
           USD: "$",
           CAD: "CA$",
@@ -636,12 +637,12 @@ class wmCollectionCarousel {
           AUD: "A$",
           EUR: "€",
           CHF: "CHF",
-          NOK: "kr",
-          SEK: "kr",
-          DKK: "kr",
+          NOK: "NOK",
+          SEK: "SEK",
+          DKK: "DKK",
           NZD: "NZ$",
           SGD: "S$",
-          MXN: "$",
+          MXN: "MX$",
           HKD: "HK$",
           CZK: "Kč",
           ILS: "₪",
@@ -651,8 +652,8 @@ class wmCollectionCarousel {
           PLN: "zł",
           THB: "฿",
           BRL: "R$",
-          ARS: "$",
-          COP: "$",
+          ARS: "ARS",
+          COP: "COP",
           IDR: "Rp",
           INR: "₹",
           JPY: "¥",
