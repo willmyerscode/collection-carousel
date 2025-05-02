@@ -744,6 +744,16 @@ class wmCollectionCarousel {
       this.items = this.items.filter(item => !item.upcoming);
     }
 
+    /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 1 > total slides */
+    if (this.settings.loop && this.settings.slidesPerViewLg + 1 > this.items.length) {
+      const notification = document.createElement("div");
+      notification.className = "collection-carousel-notification";
+      notification.innerHTML = `<p>Not enough items to display ${this.settings.slidesPerViewLg} slides in view. Reducing the slides in view to ${this.items.length - 1}. Add more items to display more slides in view.</p>
+        <p>This message will only appear in the editor.</p>`;
+        this.settings.slidesPerViewLg = this.items.length - 1;
+      this.el.appendChild(notification);
+    }
+
     const builders = this.build();
 
     // Create slides for each item
@@ -947,11 +957,6 @@ class wmCollectionCarousel {
       navigationWrapper.appendChild(prevButtonWrapper);
       navigationWrapper.appendChild(nextButtonWrapper);
       this.el.appendChild(this.navigationWrapper);
-    }
-
-    /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
-    if (this.settings.loop && this.settings.slidesPerViewLg + 2 >= this.items.length) {
-      this.settings.slidesPerViewLg = this.items.length - 2;
     }
 
     if (this.settings.pagination) {
