@@ -859,8 +859,9 @@
  * Modern carousel for Squarespace Collections
  *
  * Copyright 2025 Will Myers
+**/
 
- */
+
 
 body:has([data-wm-plugin="collection-carousel"]),
 html:has([data-wm-plugin="collection-carousel"]) {
@@ -927,6 +928,31 @@ html:has([data-wm-plugin="collection-carousel"]) {
   .content-title:has(:scope + *:not(.content-metadata-below-title)) {
   margin-bottom: var(--title-spacing, 17px);
 }
+
+/*Notification*/
+[data-wm-plugin="collection-carousel"] .collection-carousel-notification {
+  position: absolute;
+  display: none;
+  z-index: 10 ;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: 300px;
+  background-color: hsla(var(--black-hsl),0.75);
+  backdrop-filter: blur(5px);
+  border-radius: 10px;
+  padding: 17px;
+  margin: 17px !important;
+}
+.sqs-edit-mode [data-wm-plugin="collection-carousel"] .collection-carousel-notification {
+  display: block
+}
+[data-wm-plugin="collection-carousel"] .collection-carousel-notification p{
+  font-size: 0.9rem;
+  color: hsla(var(--white-hsl),1);
+  margin: 0;
+}
+
 
 /*Title*/
 [data-wm-plugin="collection-carousel"] .content-title > * {
