@@ -436,6 +436,27 @@ class wmCollectionCarousel {
       el.dataset.creative = JSON.stringify(creative);
     }
 
+    if (el.dataset.effect === "creative-coverflow-2") {
+      el.dataset.effect = "creative";
+      const creative = {
+        limitProgress: 1,
+        progressMultiplier: 1,
+        prev: {
+          opacity: 1,
+          translate: ["-80%", 0, 0],
+          scale: 0.9,
+          rotate: [0, 0, 0],
+        },
+        next: {
+          opacity: 1,
+          translate: ["80%", 0, 0],
+          scale: 0.9,
+          rotate: [0, 0, 0],
+        },
+      };
+      el.dataset.creative = JSON.stringify(creative);
+    }
+
     function parseAttr(string) {
       if (string === "true") return true;
       if (string === "false") return false;
@@ -631,33 +652,33 @@ class wmCollectionCarousel {
         // Currency symbol mapping
 
         const currencyMap = {
-          USD: "$",
-          CAD: "CA$",
-          GBP: "£",
-          AUD: "A$",
-          EUR: "€",
-          CHF: "CHF",
-          NOK: "NOK",
-          SEK: "SEK",
-          DKK: "DKK",
-          NZD: "NZ$",
-          SGD: "S$",
-          MXN: "MX$",
-          HKD: "HK$",
-          CZK: "Kč",
-          ILS: "₪",
-          MYR: "RM",
-          RUB: "₽",
-          PHP: "₱",
-          PLN: "zł",
-          THB: "฿",
-          BRL: "R$",
-          ARS: "ARS",
-          COP: "COP",
-          IDR: "Rp",
-          INR: "₹",
-          JPY: "¥",
-          ZAR: "R",
+          USD: { symbol: "$", prefix: true },
+          CAD: { symbol: "CA$", prefix: true },
+          GBP: { symbol: "£", prefix: true },
+          AUD: { symbol: "A$", prefix: true },
+          EUR: { symbol: "€", prefix: false },
+          CHF: { symbol: "CHF", prefix: true },
+          NOK: { symbol: "NOK", prefix: false },
+          SEK: { symbol: "SEK", prefix: false },
+          DKK: { symbol: "DKK", prefix: false },
+          NZD: { symbol: "NZ$", prefix: true },
+          SGD: { symbol: "S$", prefix: true },
+          MXN: { symbol: "MX$", prefix: true },
+          HKD: { symbol: "HK$", prefix: true },
+          CZK: { symbol: "Kč", prefix: false },
+          ILS: { symbol: "₪", prefix: true },
+          MYR: { symbol: "RM", prefix: true },
+          RUB: { symbol: "₽", prefix: false },
+          PHP: { symbol: "₱", prefix: true },
+          PLN: { symbol: "zł", prefix: false },
+          THB: { symbol: "฿", prefix: true },
+          BRL: { symbol: "R$", prefix: true },
+          ARS: { symbol: "ARS", prefix: true },
+          COP: { symbol: "COP", prefix: true },
+          IDR: { symbol: "Rp", prefix: true },
+          INR: { symbol: "₹", prefix: true },
+          JPY: { symbol: "¥", prefix: true },
+          ZAR: { symbol: "R", prefix: true },
         };
 
         // Get variants array and check if it exists and has items
@@ -669,17 +690,30 @@ class wmCollectionCarousel {
           const currency = firstVariant.priceMoney?.currency || "USD";
           const isOnSale = firstVariant.onSale;
 
+          const languageTag = window.Static?.SQUARESPACE_CONTEXT?.website?.language || 'en-US';
+
           // Add "from" if there are multiple variants
           const pricePrefix = variants.length > 1 ? "from " : "";
-          const currencySymbol = currencyMap[currency] || "$";
+          const currencyInfo = currencyMap[currency] || { symbol: "$", prefix: true };
+          const currencySymbol = currencyInfo.symbol;
+          const symbolIsPrefix = currencyInfo.prefix;
+          const updatedAmount = parseFloat(basePrice).toLocaleString(languageTag, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+
+
+          const formatPrice = (amount) => {
+            return symbolIsPrefix ? `${currencySymbol}${amount}` : `${amount} ${currencySymbol}`;
+          };
 
           if (isOnSale && salePrice) {
             price.innerHTML = `
-              <span class="original-price" style="text-decoration: line-through">${pricePrefix}${currencySymbol}${basePrice}</span>
-              <span class="sale-price">${currencySymbol}${salePrice}</span>
+              <span class="original-price" style="text-decoration: line-through">${pricePrefix} ${formatPrice(basePrice)}</span>
+              <span class="sale-price">${formatPrice(salePrice)}</span>
             `;
           } else {
-            price.innerHTML = basePrice ? `${pricePrefix}${currencySymbol}${basePrice}` : "";
+            price.innerHTML = basePrice ? `${pricePrefix} ${formatPrice(updatedAmount)}` : "";
           }
         }
         return price;
@@ -744,7 +778,10 @@ class wmCollectionCarousel {
       this.items = this.items.filter(item => !item.upcoming);
     }
 
-    /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 1 > total slides */
+    const builders = this.build();
+
+
+    /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
     if (this.settings.loop && this.settings.slidesPerViewLg + 1 > this.items.length) {
       const notification = document.createElement("div");
       notification.className = "collection-carousel-notification";
@@ -753,8 +790,6 @@ class wmCollectionCarousel {
         this.settings.slidesPerViewLg = this.items.length - 1;
       this.el.appendChild(notification);
     }
-
-    const builders = this.build();
 
     // Create slides for each item
     this.items.forEach(item => {
@@ -1162,6 +1197,7 @@ class wmCollectionCarousel {
     return elem.dispatchEvent(event);
   }
 }
+
 
 (function () {
   /**
