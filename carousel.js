@@ -684,7 +684,7 @@ class wmCollectionCarousel {
         // Get variants array and check if it exists and has items
         const variants = item.variants || [];
         if (variants.length > 0) {
-          const firstVariant = variants[0];
+          const firstVariant = variants.sort((a, b) => a.price - b.price)[0];
           const basePrice = firstVariant.priceMoney?.value;
           const salePrice = firstVariant.salePriceMoney?.value;
           const currency = firstVariant.priceMoney?.currency || "USD";
