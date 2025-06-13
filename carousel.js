@@ -6,7 +6,7 @@ class wmCollectionCarousel {
       layout: "full-width", // header-adapt or folder
       fullWidth: false,
       speed: 300,
-      limit: 40,
+      limit: 20,
       featured: false,
       cacheCollections: false,
       cacheDuration: 0, // minutes
@@ -1201,7 +1201,7 @@ class wmCollectionCarousel {
 
   async getCollectionData() {
     const sourceUrl = this.el.dataset.source;
-    const limit = this.settings.limit;
+    let limit = this.settings.limit;
     if (!sourceUrl) return;
     let items = [];
     let collection = null;
@@ -1263,6 +1263,10 @@ class wmCollectionCarousel {
         type = determineCollectionType(collection.typeLabel);
 
         if (type === "event") {
+          if (!this.el.dataset.limit) {
+            this.settings.limit = 40;
+            limit = 40;
+          }
           const upcoming = json.upcoming.map(item => ({
             ...item,
             upcoming: true,
