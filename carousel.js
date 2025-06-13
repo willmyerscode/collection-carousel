@@ -6,7 +6,7 @@ class wmCollectionCarousel {
       layout: "full-width", // header-adapt or folder
       fullWidth: false,
       speed: 300,
-      limit: 20,
+      limit: 40,
       featured: false,
       cacheCollections: false,
       cacheDuration: 0, // minutes
@@ -25,7 +25,15 @@ class wmCollectionCarousel {
       metadataDelimiter: "|",
       categoriesDelimiter: ", ",
       tagsDelimiter: ", ",
-      contentOrder: ["metadataAboveTitle", "title", "metadataBelowTitle", "price", "eventDates", "excerpt", "metadataBelowExcerpt"],
+      contentOrder: [
+        "metadataAboveTitle",
+        "title",
+        "metadataBelowTitle",
+        "price",
+        "eventDates",
+        "excerpt",
+        "metadataBelowExcerpt",
+      ],
       slidesPerView: "auto",
       slidesPerGroup: 1,
       spaceBetween: 30,
@@ -98,7 +106,10 @@ class wmCollectionCarousel {
         };
       }
 
-      if (typeof value === "string" && value.match(/\d+(\.\d+)?(px|rem|em|vw|%)/)) {
+      if (
+        typeof value === "string" &&
+        value.match(/\d+(\.\d+)?(px|rem|em|vw|%)/)
+      ) {
         return {
           slidesPerView: "auto",
           width: value,
@@ -112,9 +123,15 @@ class wmCollectionCarousel {
 
     // Process all breakpoint values
     let mainView = handleSlideWidth(settings.slidesPerView);
-    let smView = handleSlideWidth(settings.slidesPerViewSm || settings.slidesPerView);
-    let mdView = handleSlideWidth(settings.slidesPerViewMd || settings.slidesPerView);
-    let lgView = handleSlideWidth(settings.slidesPerViewLg || settings.slidesPerView);
+    let smView = handleSlideWidth(
+      settings.slidesPerViewSm || settings.slidesPerView
+    );
+    let mdView = handleSlideWidth(
+      settings.slidesPerViewMd || settings.slidesPerView
+    );
+    let lgView = handleSlideWidth(
+      settings.slidesPerViewLg || settings.slidesPerView
+    );
 
     // Create resize handler
     const updateSwiperOffsets = swiper => {
@@ -147,9 +164,15 @@ class wmCollectionCarousel {
       if (!swiper) return;
 
       mainView = handleSlideWidth(settings.slidesPerView);
-      smView = handleSlideWidth(settings.slidesPerViewSm || settings.slidesPerView);
-      mdView = handleSlideWidth(settings.slidesPerViewMd || settings.slidesPerView);
-      lgView = handleSlideWidth(settings.slidesPerViewLg || settings.slidesPerView);
+      smView = handleSlideWidth(
+        settings.slidesPerViewSm || settings.slidesPerView
+      );
+      mdView = handleSlideWidth(
+        settings.slidesPerViewMd || settings.slidesPerView
+      );
+      lgView = handleSlideWidth(
+        settings.slidesPerViewLg || settings.slidesPerView
+      );
 
       const width = window.innerWidth;
       let currentView;
@@ -177,7 +200,10 @@ class wmCollectionCarousel {
     const updateNavigationHeight = swiper => {
       if (!swiper) return;
       const image = swiper.el.querySelector(".swiper-slide-active img");
-      container.style.setProperty("--wm-cc-navigation-height", `${image.offsetHeight}px`);
+      container.style.setProperty(
+        "--wm-cc-navigation-height",
+        `${image.offsetHeight}px`
+      );
     };
 
     return {
@@ -234,7 +260,9 @@ class wmCollectionCarousel {
       navigation: {
         enabled: settings.navigation,
         nextEl: `#${settings.id} .navigation-button-next`,
-        prevEl: settings.freeMode ? `#${settings.id} .navigation-button-prev.asdf` : `#${settings.id} .navigation-button-prev`, // basically preventing the event listeners from mounting if free mode is enabled
+        prevEl: settings.freeMode
+          ? `#${settings.id} .navigation-button-prev.asdf`
+          : `#${settings.id} .navigation-button-prev`, // basically preventing the event listeners from mounting if free mode is enabled
       },
       pagination: {
         enabled: settings.pagination,
@@ -247,18 +275,30 @@ class wmCollectionCarousel {
       breakpoints: {
         0: {
           slidesPerView: smView.slidesPerView,
-          spaceBetween: parseInt(settings.spaceBetweenSm ?? settings.spaceBetween),
-          slidesPerGroup: parseInt(settings.slidesPerGroupSm || settings.slidesPerGroup),
+          spaceBetween: parseInt(
+            settings.spaceBetweenSm ?? settings.spaceBetween
+          ),
+          slidesPerGroup: parseInt(
+            settings.slidesPerGroupSm || settings.slidesPerGroup
+          ),
         },
         768: {
           slidesPerView: mdView.slidesPerView,
-          spaceBetween: parseInt(settings.spaceBetweenMd ?? settings.spaceBetween),
-          slidesPerGroup: parseInt(settings.slidesPerGroupMd || settings.slidesPerGroup),
+          spaceBetween: parseInt(
+            settings.spaceBetweenMd ?? settings.spaceBetween
+          ),
+          slidesPerGroup: parseInt(
+            settings.slidesPerGroupMd || settings.slidesPerGroup
+          ),
         },
         1024: {
           slidesPerView: lgView.slidesPerView,
-          spaceBetween: parseInt(settings.spaceBetweenLg ?? settings.spaceBetween),
-          slidesPerGroup: parseInt(settings.slidesPerGroupLg || settings.slidesPerGroup),
+          spaceBetween: parseInt(
+            settings.spaceBetweenLg ?? settings.spaceBetween
+          ),
+          slidesPerGroup: parseInt(
+            settings.slidesPerGroupLg || settings.slidesPerGroup
+          ),
         },
       },
       on: {
@@ -276,11 +316,17 @@ class wmCollectionCarousel {
           window.addEventListener("resize", () => {
             updateSwiperOffsets(swiper);
             updateSlideWidths(swiper);
-            if (settings.navigationLayout === "overlay image" || settings.navigationLayout === "overlay images") {
+            if (
+              settings.navigationLayout === "overlay image" ||
+              settings.navigationLayout === "overlay images"
+            ) {
               updateNavigationHeight(swiper);
             }
           });
-          if (settings.navigationLayout === "overlay image" || settings.navigationLayout === "overlay images") {
+          if (
+            settings.navigationLayout === "overlay image" ||
+            settings.navigationLayout === "overlay images"
+          ) {
             updateNavigationHeight(swiper);
           }
 
@@ -303,11 +349,20 @@ class wmCollectionCarousel {
           if (settings.freeMode && settings.navigation) {
             // Custom prev button event
 
-            const prevButton = container.querySelector(`#${settings.id} .navigation-button-prev button`);
+            const prevButton = container.querySelector(
+              `#${settings.id} .navigation-button-prev button`
+            );
 
             prevButton?.addEventListener("click", () => {
               const swiper = this;
-              const {params, snapGrid, slidesGrid, rtlTranslate, enabled, animating} = swiper;
+              const {
+                params,
+                snapGrid,
+                slidesGrid,
+                rtlTranslate,
+                enabled,
+                animating,
+              } = swiper;
               if (!enabled || swiper.destroyed) return swiper;
 
               let speed = swiper.params.speed;
@@ -321,13 +376,16 @@ class wmCollectionCarousel {
               const isVirtual = swiper.virtual && params.virtual.enabled;
 
               if (params.loop) {
-                if (animating && !isVirtual && params.loopPreventsSliding) return false;
+                if (animating && !isVirtual && params.loopPreventsSliding)
+                  return false;
 
                 swiper.loopFix({direction: "prev"});
                 // eslint-disable-next-line
                 swiper._clientLeft = swiper.wrapperEl.clientLeft;
               }
-              const translate = rtlTranslate ? swiper.translate : -swiper.translate;
+              const translate = rtlTranslate
+                ? swiper.translate
+                : -swiper.translate;
 
               function normalize(val) {
                 if (val < 0) return -Math.floor(Math.abs(val));
@@ -336,7 +394,8 @@ class wmCollectionCarousel {
               const normalizedTranslate = normalize(translate);
               const normalizedSnapGrid = snapGrid.map(val => normalize(val));
 
-              let prevSnap = snapGrid[normalizedSnapGrid.indexOf(normalizedTranslate) - 1];
+              let prevSnap =
+                snapGrid[normalizedSnapGrid.indexOf(normalizedTranslate) - 1];
               if (typeof prevSnap === "undefined") {
                 let prevSnapIndex;
                 snapGrid.forEach((snap, snapIndex) => {
@@ -346,20 +405,35 @@ class wmCollectionCarousel {
                   }
                 });
                 if (typeof prevSnapIndex !== "undefined") {
-                  prevSnap = snapGrid[prevSnapIndex > 0 ? prevSnapIndex - 1 : prevSnapIndex];
+                  prevSnap =
+                    snapGrid[
+                      prevSnapIndex > 0 ? prevSnapIndex - 1 : prevSnapIndex
+                    ];
                 }
               }
               let prevIndex = 0;
               if (typeof prevSnap !== "undefined") {
                 prevIndex = slidesGrid.indexOf(prevSnap);
                 if (prevIndex < 0) prevIndex = swiper.activeIndex - 1;
-                if (params.slidesPerView === "auto" && params.slidesPerGroup === 1 && params.slidesPerGroupAuto) {
-                  prevIndex = prevIndex - swiper.slidesPerViewDynamic("previous", true) + 1;
+                if (
+                  params.slidesPerView === "auto" &&
+                  params.slidesPerGroup === 1 &&
+                  params.slidesPerGroupAuto
+                ) {
+                  prevIndex =
+                    prevIndex -
+                    swiper.slidesPerViewDynamic("previous", true) +
+                    1;
                   prevIndex = Math.max(prevIndex, 0);
                 }
               }
               if (params.rewind && swiper.isBeginning) {
-                const lastIndex = swiper.params.virtual && swiper.params.virtual.enabled && swiper.virtual ? swiper.virtual.slides.length - 1 : swiper.slides.length - 1;
+                const lastIndex =
+                  swiper.params.virtual &&
+                  swiper.params.virtual.enabled &&
+                  swiper.virtual
+                    ? swiper.virtual.slides.length - 1
+                    : swiper.slides.length - 1;
                 return swiper.slideTo(lastIndex, speed, runCallbacks, internal);
               } else if (params.loop && swiper.activeIndex === 0) {
                 requestAnimationFrame(() => {
@@ -384,7 +458,9 @@ class wmCollectionCarousel {
       el.dataset.mousewheel = el.dataset.freeMode;
     }
     if (!el.dataset.fullWidth) {
-      el.offsetWidth === window.innerWidth ? (el.dataset.fullWidth = true) : (el.dataset.fullWidth = false);
+      el.offsetWidth === window.innerWidth
+        ? (el.dataset.fullWidth = true)
+        : (el.dataset.fullWidth = false);
     }
     if (el.dataset.effect === "coverflow" && !el.dataset.centeredSlides) {
       el.dataset.centeredSlides = true;
@@ -397,9 +473,15 @@ class wmCollectionCarousel {
       el.dataset.dynamicMainBullets = el.dataset.dynamicBullets;
     }
     if (el.dataset.spaceBetween) {
-      el.dataset.spaceBetweenSm = el.dataset.spaceBetweenSm ? parseInt(el.dataset.spaceBetweenSm) : parseInt(el.dataset.spaceBetween);
-      el.dataset.spaceBetweenMd = el.dataset.spaceBetweenMd ? parseInt(el.dataset.spaceBetweenMd) : parseInt(el.dataset.spaceBetween);
-      el.dataset.spaceBetweenLg = el.dataset.spaceBetweenLg ? parseInt(el.dataset.spaceBetweenLg) : parseInt(el.dataset.spaceBetween);
+      el.dataset.spaceBetweenSm = el.dataset.spaceBetweenSm
+        ? parseInt(el.dataset.spaceBetweenSm)
+        : parseInt(el.dataset.spaceBetween);
+      el.dataset.spaceBetweenMd = el.dataset.spaceBetweenMd
+        ? parseInt(el.dataset.spaceBetweenMd)
+        : parseInt(el.dataset.spaceBetween);
+      el.dataset.spaceBetweenLg = el.dataset.spaceBetweenLg
+        ? parseInt(el.dataset.spaceBetweenLg)
+        : parseInt(el.dataset.spaceBetween);
     }
     if (el.dataset.autoplay) {
       const number = parseInt(el.dataset.autoplay);
@@ -464,11 +546,12 @@ class wmCollectionCarousel {
       if (!isNaN(number) && number.toString() === string) return number;
 
       // Try to parse JSON if string starts with { or [
-      if (typeof string === "string" && (string.trim().startsWith("{") || string.trim().startsWith("["))) {
+      if (
+        typeof string === "string" &&
+        (string.trim().startsWith("{") || string.trim().startsWith("["))
+      ) {
         try {
           const parsed = JSON.parse(string);
-          // Uncomment to debug JSON parsing
-          // console.log("Successfully parsed JSON attribute:", string, "->", parsed);
           return parsed;
         } catch (e) {
           console.warn("Failed to parse JSON from attribute:", string);
@@ -483,7 +566,12 @@ class wmCollectionCarousel {
       // If the value is already a parsed object/array and we're at the top level,
       // we can assign directly without splitting
       const parsedValue = parseAttr(value);
-      if (typeof parsedValue === "object" && parsedValue !== null && !Array.isArray(parsedValue) && !keyPath.includes("__")) {
+      if (
+        typeof parsedValue === "object" &&
+        parsedValue !== null &&
+        !Array.isArray(parsedValue) &&
+        !keyPath.includes("__")
+      ) {
         obj[keyPath] = parsedValue;
         return;
       }
@@ -505,20 +593,31 @@ class wmCollectionCarousel {
     }
 
     if (dataAttributes.metadataBelowExcerpt) {
-      dataAttributes.metadataBelowExcerpt = dataAttributes.metadataBelowExcerpt.split(",").map(item => item.trim().toLowerCase());
+      dataAttributes.metadataBelowExcerpt = dataAttributes.metadataBelowExcerpt
+        .split(",")
+        .map(item => item.trim().toLowerCase());
     }
     if (dataAttributes.metadataAboveTitle) {
-      dataAttributes.metadataAboveTitle = dataAttributes.metadataAboveTitle.split(",").map(item => item.trim().toLowerCase());
+      dataAttributes.metadataAboveTitle = dataAttributes.metadataAboveTitle
+        .split(",")
+        .map(item => item.trim().toLowerCase());
     }
     if (dataAttributes.metadataBelowTitle) {
-      dataAttributes.metadataBelowTitle = dataAttributes.metadataBelowTitle.split(",").map(item => item.trim().toLowerCase());
+      dataAttributes.metadataBelowTitle = dataAttributes.metadataBelowTitle
+        .split(",")
+        .map(item => item.trim().toLowerCase());
     }
 
     return dataAttributes;
   }
   constructor(el) {
     this.el = el;
-    this.settings = wmCollectionCarousel.deepMerge({}, wmCollectionCarousel.defaultSettings, wmCollectionCarousel.userSettings, wmCollectionCarousel.instanceSettings(el));
+    this.settings = wmCollectionCarousel.deepMerge(
+      {},
+      wmCollectionCarousel.defaultSettings,
+      wmCollectionCarousel.userSettings,
+      wmCollectionCarousel.instanceSettings(el)
+    );
     if (!this.el.id) {
       this.el.id = `wm-carousel-${Math.random().toString(36).substr(2, 9)}`;
       this.settings.id = this.el.id;
@@ -541,8 +640,14 @@ class wmCollectionCarousel {
     this.siteJson = window.Static?.SQUARESPACE_CONTEXT?.tweakJSON || {};
 
     this.buildStructure();
-    this.swiperSettings = wmCollectionCarousel.getSwiperConfig(this.settings, this.el);
-    this.swiper = new wmCollectionCarousel.Swiper(this.swiperContainer, this.swiperSettings);
+    this.swiperSettings = wmCollectionCarousel.getSwiperConfig(
+      this.settings,
+      this.el
+    );
+    this.swiper = new wmCollectionCarousel.Swiper(
+      this.swiperContainer,
+      this.swiperSettings
+    );
     wmCollectionCarousel.emitEvent("wmCollectionCarousel:ready", self);
     this.el.wmCollectionCarousel = {
       settings: this.settings,
@@ -565,17 +670,26 @@ class wmCollectionCarousel {
           .map(
             (tag, index, array) => `
                 <li>
-                    <span class="tag" rel="tag">${tag}${index < array.length - 1 && this.settings.tagsDelimiter === ", " ? `<span class="tag-delimiter">,</span>` : ""}</span>
+                    <span class="tag" rel="tag">${tag}${
+              index < array.length - 1 && this.settings.tagsDelimiter === ", "
+                ? `<span class="tag-delimiter">,</span>`
+                : ""
+            }</span>
                 </li>
             `
           )
-          .join(this.settings.tagsDelimiter === ", " ? " " : `<span class="tag-delimiter">${this.settings.tagsDelimiter}</span>`);
+          .join(
+            this.settings.tagsDelimiter === ", "
+              ? " "
+              : `<span class="tag-delimiter">${this.settings.tagsDelimiter}</span>`
+          );
 
         tags.appendChild(tagList);
         return tags;
       },
       categories: item => {
-        if (!item?.categories?.length && !item?.categoriesFull?.length) return null;
+        if (!item?.categories?.length && !item?.categoriesFull?.length)
+          return null;
 
         const categories = document.createElement("div");
         categories.className = "categories metadata";
@@ -588,21 +702,39 @@ class wmCollectionCarousel {
             .map(
               (category, index, array) => `
               <li>
-                <span class="category" rel="category">${category}${index < array.length - 1 && this.settings.categoriesDelimiter === ", " ? `<span class='category-delimiter'>,</span>` : ""}</span>
+                <span class="category" rel="category">${category}${
+                index < array.length - 1 &&
+                this.settings.categoriesDelimiter === ", "
+                  ? `<span class='category-delimiter'>,</span>`
+                  : ""
+              }</span>
               </li>
             `
             )
-            .join(this.settings.categoriesDelimiter === ", " ? " " : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`);
+            .join(
+              this.settings.categoriesDelimiter === ", "
+                ? " "
+                : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`
+            );
         } else if (item.categoriesFull?.length) {
           categoryList.innerHTML = item.categoriesFull
             .map(
               (category, index, array) => `
               <li>
-                <span class="category" rel="category">${category.displayName}${index < array.length - 1 && this.settings.categoriesDelimiter === ", " ? "<span class='category-delimiter'>,</span>" : ""}</span>
+                <span class="category" rel="category">${category.displayName}${
+                index < array.length - 1 &&
+                this.settings.categoriesDelimiter === ", "
+                  ? "<span class='category-delimiter'>,</span>"
+                  : ""
+              }</span>
               </li>
             `
             )
-            .join(this.settings.categoriesDelimiter === ", " ? " " : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`);
+            .join(
+              this.settings.categoriesDelimiter === ", "
+                ? " "
+                : `<span class='category-delimiter'>${this.settings.categoriesDelimiter}</span>`
+            );
         }
 
         categories.appendChild(categoryList);
@@ -626,7 +758,10 @@ class wmCollectionCarousel {
           minute: undefined,
         };
 
-        dateContent.innerHTML = publishDate.toLocaleString(dateFormat.locale, options);
+        dateContent.innerHTML = publishDate.toLocaleString(
+          dateFormat.locale,
+          options
+        );
         return date;
       },
       publishdate: function (item) {
@@ -652,33 +787,33 @@ class wmCollectionCarousel {
         // Currency symbol mapping
 
         const currencyMap = {
-          USD: { symbol: "$", prefix: true },
-          CAD: { symbol: "CA$", prefix: true },
-          GBP: { symbol: "£", prefix: true },
-          AUD: { symbol: "A$", prefix: true },
-          EUR: { symbol: "€", prefix: false },
-          CHF: { symbol: "CHF", prefix: true },
-          NOK: { symbol: "NOK", prefix: false },
-          SEK: { symbol: "SEK", prefix: false },
-          DKK: { symbol: "DKK", prefix: false },
-          NZD: { symbol: "NZ$", prefix: true },
-          SGD: { symbol: "S$", prefix: true },
-          MXN: { symbol: "MX$", prefix: true },
-          HKD: { symbol: "HK$", prefix: true },
-          CZK: { symbol: "Kč", prefix: false },
-          ILS: { symbol: "₪", prefix: true },
-          MYR: { symbol: "RM", prefix: true },
-          RUB: { symbol: "₽", prefix: false },
-          PHP: { symbol: "₱", prefix: true },
-          PLN: { symbol: "zł", prefix: false },
-          THB: { symbol: "฿", prefix: true },
-          BRL: { symbol: "R$", prefix: true },
-          ARS: { symbol: "ARS", prefix: true },
-          COP: { symbol: "COP", prefix: true },
-          IDR: { symbol: "Rp", prefix: true },
-          INR: { symbol: "₹", prefix: true },
-          JPY: { symbol: "¥", prefix: true },
-          ZAR: { symbol: "R", prefix: true },
+          USD: {symbol: "$", prefix: true},
+          CAD: {symbol: "CA$", prefix: true},
+          GBP: {symbol: "£", prefix: true},
+          AUD: {symbol: "A$", prefix: true},
+          EUR: {symbol: "€", prefix: false},
+          CHF: {symbol: "CHF", prefix: true},
+          NOK: {symbol: "NOK", prefix: false},
+          SEK: {symbol: "SEK", prefix: false},
+          DKK: {symbol: "DKK", prefix: false},
+          NZD: {symbol: "NZ$", prefix: true},
+          SGD: {symbol: "S$", prefix: true},
+          MXN: {symbol: "MX$", prefix: true},
+          HKD: {symbol: "HK$", prefix: true},
+          CZK: {symbol: "Kč", prefix: false},
+          ILS: {symbol: "₪", prefix: true},
+          MYR: {symbol: "RM", prefix: true},
+          RUB: {symbol: "₽", prefix: false},
+          PHP: {symbol: "₱", prefix: true},
+          PLN: {symbol: "zł", prefix: false},
+          THB: {symbol: "฿", prefix: true},
+          BRL: {symbol: "R$", prefix: true},
+          ARS: {symbol: "ARS", prefix: true},
+          COP: {symbol: "COP", prefix: true},
+          IDR: {symbol: "Rp", prefix: true},
+          INR: {symbol: "₹", prefix: true},
+          JPY: {symbol: "¥", prefix: true},
+          ZAR: {symbol: "R", prefix: true},
         };
 
         // Get variants array and check if it exists and has items
@@ -690,30 +825,42 @@ class wmCollectionCarousel {
           const currency = firstVariant.priceMoney?.currency || "USD";
           const isOnSale = firstVariant.onSale;
 
-          const languageTag = window.Static?.SQUARESPACE_CONTEXT?.website?.language || 'en-US';
+          const languageTag =
+            window.Static?.SQUARESPACE_CONTEXT?.website?.language || "en-US";
 
           // Add "from" if there are multiple variants
           const pricePrefix = variants.length > 1 ? "from " : "";
-          const currencyInfo = currencyMap[currency] || { symbol: "$", prefix: true };
+          const currencyInfo = currencyMap[currency] || {
+            symbol: "$",
+            prefix: true,
+          };
           const currencySymbol = currencyInfo.symbol;
           const symbolIsPrefix = currencyInfo.prefix;
-          const updatedAmount = parseFloat(basePrice).toLocaleString(languageTag, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          });
+          const updatedAmount = parseFloat(basePrice).toLocaleString(
+            languageTag,
+            {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }
+          );
 
-
-          const formatPrice = (amount) => {
-            return symbolIsPrefix ? `${currencySymbol}${amount}` : `${amount} ${currencySymbol}`;
+          const formatPrice = amount => {
+            return symbolIsPrefix
+              ? `${currencySymbol}${amount}`
+              : `${amount} ${currencySymbol}`;
           };
 
           if (isOnSale && salePrice) {
             price.innerHTML = `
-              <span class="original-price" style="text-decoration: line-through">${pricePrefix} ${formatPrice(basePrice)}</span>
+              <span class="original-price" style="text-decoration: line-through">${pricePrefix} ${formatPrice(
+              basePrice
+            )}</span>
               <span class="sale-price">${formatPrice(salePrice)}</span>
             `;
           } else {
-            price.innerHTML = basePrice ? `${pricePrefix} ${formatPrice(updatedAmount)}` : "";
+            price.innerHTML = basePrice
+              ? `${pricePrefix} ${formatPrice(updatedAmount)}`
+              : "";
           }
         }
         return price;
@@ -748,7 +895,9 @@ class wmCollectionCarousel {
         };
 
         const sameDay = startDate.toDateString() === endDate.toDateString();
-        const dateString = sameDay ? `${formatDate(startDate)} - ${formatDate(endDate, false)}` : `${formatDate(startDate)} - ${formatDate(endDate)}`;
+        const dateString = sameDay
+          ? `${formatDate(startDate)} - ${formatDate(endDate, false)}`
+          : `${formatDate(startDate)} - ${formatDate(endDate)}`;
 
         eventDatesContent.innerHTML = dateString;
         return eventDates;
@@ -767,9 +916,20 @@ class wmCollectionCarousel {
     swiperWrapper.className = "swiper-wrapper";
 
     if (this.siteJson) {
-      this.siteJson.pagePadding ? this.el.style.setProperty("--wm-cc-page-padding", this.siteJson.pagePadding) : null;
-      this.siteJson.maxPageWidth ? this.el.style.setProperty("--wm-cc-max-page-width", this.siteJson.maxPageWidth) : null;
+      this.siteJson.pagePadding
+        ? this.el.style.setProperty(
+            "--wm-cc-page-padding",
+            this.siteJson.pagePadding
+          )
+        : null;
+      this.siteJson.maxPageWidth
+        ? this.el.style.setProperty(
+            "--wm-cc-max-page-width",
+            this.siteJson.maxPageWidth
+          )
+        : null;
     }
+
 
     /* If type is event, only add events with item.upcoming set to true */
     if (this.type === "event" && this.settings.events === "upcoming") {
@@ -780,18 +940,25 @@ class wmCollectionCarousel {
 
     const builders = this.build();
 
-
     /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
-    if (this.settings.loop && this.settings.slidesPerViewLg + 1 > this.items.length) {
+    if (
+      this.settings.loop &&
+      this.settings.slidesPerViewLg + 1 > this.items.length
+    ) {
       const notification = document.createElement("div");
       notification.className = "collection-carousel-notification";
-      notification.innerHTML = `<p>Not enough items to display ${this.settings.slidesPerViewLg} slides in view. Reducing the slides in view to ${this.items.length - 1}. Add more items to display more slides in view.</p>
+      notification.innerHTML = `<p>Not enough items to display ${
+        this.settings.slidesPerViewLg
+      } slides in view. Reducing the slides in view to ${
+        this.items.length - 1
+      }. Add more items to display more slides in view.</p>
         <p>This message will only appear in the editor.</p>`;
-        this.settings.slidesPerViewLg = this.items.length - 1;
+      this.settings.slidesPerViewLg = this.items.length - 1;
       this.el.appendChild(notification);
     }
 
     // Create slides for each item
+
     this.items.forEach(item => {
       // if (index >= this.settings.limit) return;
 
@@ -808,7 +975,9 @@ class wmCollectionCarousel {
         image.src = item.assetUrl;
         image.alt = item.title;
         if (item.mediaFocalPoint) {
-          image.style.objectPosition = `${item.mediaFocalPoint.x * 100}% ${item.mediaFocalPoint.y * 100}%`;
+          image.style.objectPosition = `${item.mediaFocalPoint.x * 100}% ${
+            item.mediaFocalPoint.y * 100
+          }%`;
         }
 
         image.style.objectFit = "cover";
@@ -817,7 +986,11 @@ class wmCollectionCarousel {
         if (this.settings.clickthrough) {
           const imageLink = document.createElement("a");
           imageLink.className = "slide-thumbnail-link";
-          imageLink.href = this.settings.wmPopups ? `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}` : item.passthrough ? item.sourceUrl : item.fullUrl;
+          imageLink.href = this.settings.wmPopups
+            ? `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}`
+            : item.passthrough
+            ? item.sourceUrl
+            : item.fullUrl;
 
           imageLink.target = this.settings.newWindow ? "_blank" : "_self";
           imageContainer.appendChild(image);
@@ -847,7 +1020,11 @@ class wmCollectionCarousel {
         if (this.settings.clickthrough) {
           const titleLink = document.createElement("a");
           titleLink.href = item.passthrough ? item.sourceUrl : item.fullUrl;
-          titleLink.href = this.settings.wmPopups ? `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}` : item.passthrough ? item.sourceUrl : item.fullUrl;
+          titleLink.href = this.settings.wmPopups
+            ? `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}`
+            : item.passthrough
+            ? item.sourceUrl
+            : item.fullUrl;
 
           titleLink.target = this.settings.newWindow ? "_blank" : "_self";
           titleLink.innerHTML = item.title;
@@ -879,7 +1056,8 @@ class wmCollectionCarousel {
 
       if (this.settings.metadataAboveTitle.length) {
         metadataAboveTitle = document.createElement("div");
-        metadataAboveTitle.className = "content-metadata-above-title metadata-group";
+        metadataAboveTitle.className =
+          "content-metadata-above-title metadata-group";
         let hasAddedElement = false;
 
         this.settings.metadataAboveTitle.forEach(metadata => {
@@ -900,7 +1078,8 @@ class wmCollectionCarousel {
       }
       if (this.settings.metadataBelowTitle.length) {
         metadataBelowTitle = document.createElement("div");
-        metadataBelowTitle.className = "content-metadata-below-title metadata-group";
+        metadataBelowTitle.className =
+          "content-metadata-below-title metadata-group";
         let hasAddedElement = false;
 
         this.settings.metadataBelowTitle.forEach(metadata => {
@@ -921,7 +1100,8 @@ class wmCollectionCarousel {
       }
       if (this.settings.metadataBelowExcerpt.length) {
         metadataBelowExcerpt = document.createElement("div");
-        metadataBelowExcerpt.className = "content-metadata-below-excerpt metadata-group";
+        metadataBelowExcerpt.className =
+          "content-metadata-below-excerpt metadata-group";
         let hasAddedElement = false;
 
         this.settings.metadataBelowExcerpt.forEach(metadata => {
@@ -941,17 +1121,22 @@ class wmCollectionCarousel {
         });
       }
 
-      if (this.settings.thumbnail && imageContainer) slide.appendChild(imageContainer);
+      if (this.settings.thumbnail && imageContainer)
+        slide.appendChild(imageContainer);
 
       /* Add content based on the contentOrder array */
       this.settings.contentOrder.forEach(contentPiece => {
         if (contentPiece === "title" && title) content.appendChild(title);
         if (contentPiece === "price" && price) content.appendChild(price);
-        if (contentPiece === "eventDates" && eventDates) content.appendChild(eventDates);
+        if (contentPiece === "eventDates" && eventDates)
+          content.appendChild(eventDates);
         if (contentPiece === "excerpt" && excerpt) content.appendChild(excerpt);
-        if (contentPiece === "metadataAboveTitle" && metadataAboveTitle) content.appendChild(metadataAboveTitle);
-        if (contentPiece === "metadataBelowTitle" && metadataBelowTitle) content.appendChild(metadataBelowTitle);
-        if (contentPiece === "metadataBelowExcerpt" && metadataBelowExcerpt) content.appendChild(metadataBelowExcerpt);
+        if (contentPiece === "metadataAboveTitle" && metadataAboveTitle)
+          content.appendChild(metadataAboveTitle);
+        if (contentPiece === "metadataBelowTitle" && metadataBelowTitle)
+          content.appendChild(metadataBelowTitle);
+        if (contentPiece === "metadataBelowExcerpt" && metadataBelowExcerpt)
+          content.appendChild(metadataBelowExcerpt);
       });
 
       slide.appendChild(content);
@@ -1006,7 +1191,10 @@ class wmCollectionCarousel {
       this.el.appendChild(this.pagination);
     }
 
-    if (this.settings.navigationLayout.includes("bottom") && this.settings.pagination) {
+    if (
+      this.settings.navigationLayout.includes("bottom") &&
+      this.settings.pagination
+    ) {
       this.navigationWrapper.append(this.pagination);
     }
   }
@@ -1056,10 +1244,17 @@ class wmCollectionCarousel {
 
     const getData = async path => {
       try {
-        const cacheBustedPath = path.includes("?") ? `${path}&cb=${Date.now()}` : `${path}?cb=${Date.now()}`;
+        const cacheBustedPath = path.includes("?")
+          ? `${path}&cb=${Date.now()}`
+          : `${path}?cb=${Date.now()}`;
 
         const response = await fetch(cacheBustedPath);
-        if (!response.ok) throw new Error(`Fetch error: ${response.statusText}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error(`Collection not found (404): ${path}`);
+          }
+          throw new Error(`Fetch error (${response.status}): ${response.statusText}`);
+        }
         const json = await response.json();
 
         let currentItems = json.items;
@@ -1082,7 +1277,9 @@ class wmCollectionCarousel {
             currentItems.forEach(item => {
               item.categoriesFull = item.categoryIds
                 .map(categoryId => {
-                  const category = nestedCategories.categories.find(cat => cat.id === categoryId);
+                  const category = nestedCategories.categories.find(
+                    cat => cat.id === categoryId
+                  );
                   return category || null;
                 })
                 .filter(category => category);
@@ -1091,7 +1288,6 @@ class wmCollectionCarousel {
         }
 
         if (this.settings.featured) {
-          console.log("filtering featured items");
           currentItems = currentItems.filter(item => item.starred);
         }
 
@@ -1103,7 +1299,9 @@ class wmCollectionCarousel {
         }
 
         if (json.pagination?.nextPage) {
-          await getData(json.pagination.nextPageUrl + "&format=json&cb=" + Date.now());
+          await getData(
+            json.pagination.nextPageUrl + "&format=json&cb=" + Date.now()
+          );
         }
         return {items, type};
       } catch (error) {
@@ -1135,7 +1333,6 @@ class wmCollectionCarousel {
       if (this.settings.cacheDuration > 0) {
         const cached = localStorage.getItem(cacheKey);
         if (cached && isCacheValid(cacheMetaKey)) {
-          console.log("Cache is valid, returning cached data");
           return JSON.parse(cached);
         }
       }
@@ -1157,6 +1354,8 @@ class wmCollectionCarousel {
       return freshData;
     } catch (err) {
       console.error("Error refreshing data:", err);
+      // Return safe fallback to prevent breaking other carousels
+      return {items: [], type: null};
     }
   }
   static deepMerge(...objs) {
@@ -1197,6 +1396,7 @@ class wmCollectionCarousel {
     return elem.dispatchEvent(event);
   }
 }
+
 
 
 (function () {
@@ -8909,13 +9109,23 @@ class wmCollectionCarousel {
   })();
 })();
 
+
+
 (() => {
   function initCollectionCarousel() {
-    const els = document.querySelectorAll('[data-wm-plugin="collection-carousel"]:not([data-loading])');
+    const els = document.querySelectorAll(
+      '[data-wm-plugin="collection-carousel"]:not([data-loading])'
+    );
     if (!els.length) return;
     els.forEach(el => {
       el.dataset.loading = "loading";
-      new wmCollectionCarousel(el);
+      try {
+        new wmCollectionCarousel(el);
+      } catch (error) {
+        console.error("Failed to initialize carousel:", error);
+        // Remove loading state so it doesn't get stuck
+        el.dataset.loading = "error";
+      }
     });
   }
   window.wmCollectionCarousel = {
@@ -8924,3 +9134,5 @@ class wmCollectionCarousel {
   window.wmCollectionCarousel.init();
   window.addEventListener("DOMContentLoaded", initCollectionCarousel);
 })();
+
+
