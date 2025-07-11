@@ -215,6 +215,7 @@ class wmCollectionCarousel {
       centeredSlides: settings.centeredSlides,
       touchEventsTarget: "container",
       effect: settings.effect,
+      speed: settings.speed,
       coverflowEffect: {
         rotate: settings.coverflowRotate,
         scale: settings.coverflowScale,
@@ -1198,7 +1199,6 @@ class wmCollectionCarousel {
       this.navigationWrapper.append(this.pagination);
     }
   }
-
   async getCollectionData() {
     const sourceUrl = this.el.dataset.source;
     let limit = this.settings.limit;
@@ -1400,8 +1400,6 @@ class wmCollectionCarousel {
     return elem.dispatchEvent(event);
   }
 }
-
-
 
 (function () {
   /**
@@ -9112,7 +9110,6 @@ class wmCollectionCarousel {
     return ie.use(ge), ie;
   })();
 })();
-
 
 
 (() => {
