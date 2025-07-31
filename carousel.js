@@ -988,10 +988,10 @@ class wmCollectionCarousel {
           const imageLink = document.createElement("a");
           imageLink.className = "slide-thumbnail-link";
           imageLink.href = this.settings.wmPopups
-            ? `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}`
-            : item.passthrough
+            ? `#wm-popup=${(item.passthrough && item.sourceUrl) ? item.sourceUrl : item.fullUrl}`
+            : (item.passthrough && item.sourceUrl)
             ? item.sourceUrl
-            : item.fullUrl;
+            : (item.fullUrl);
 
           imageLink.target = this.settings.newWindow ? "_blank" : "_self";
           imageContainer.appendChild(image);
@@ -1020,12 +1020,12 @@ class wmCollectionCarousel {
         const titleContent = document.createElement("h3");
         if (this.settings.clickthrough) {
           const titleLink = document.createElement("a");
-          titleLink.href = item.passthrough ? item.sourceUrl : item.fullUrl;
+          titleLink.href = (item.passthrough && item.sourceUrl) ? item.sourceUrl : item.fullUrl;
           titleLink.href = this.settings.wmPopups
             ? `#wm-popup=${item.passthrough ? item.sourceUrl : item.fullUrl}`
-            : item.passthrough
+            : (item.passthrough && item.sourceUrl)
             ? item.sourceUrl
-            : item.fullUrl;
+            : (item.fullUrl);
 
           titleLink.target = this.settings.newWindow ? "_blank" : "_self";
           titleLink.innerHTML = item.title;
