@@ -22,6 +22,8 @@ class wmCollectionCarousel {
       metadataAboveTitle: [],
       metadataBelowTitle: [],
       metadataBelowExcerpt: [],
+      metadataTagLinks: false,
+      metadataCategoryLinks: false,
       metadataDelimiter: "|",
       categoriesDelimiter: ", ",
       tagsDelimiter: ", ",
@@ -631,13 +633,14 @@ class wmCollectionCarousel {
   async init() {
     const self = this;
     wmCollectionCarousel.emitEvent("wmCollectionCarousel:beforeInit", self);
-    const {items, type} = await this.getCollectionData();
+    const {items, type, collection} = await this.getCollectionData();
     if (items.length <= 0) {
       console.error("No Items In Collection or Collection URL not available");
       return;
     }
     this.type = type;
     this.items = items;
+    this.collection = collection;
     this.siteJson = window.Static?.SQUARESPACE_CONTEXT?.tweakJSON || {};
 
     this.buildStructure();
@@ -656,6 +659,11 @@ class wmCollectionCarousel {
       items: this.items,
     };
   }
+  convertToSlug(text) {
+    if (text == null) return "";
+    const encoded = encodeURIComponent(String(text).trim());
+    return encoded.replace(/%20/g, "+");
+  }
   build() {
     return {
       tags: item => {
@@ -667,11 +675,13 @@ class wmCollectionCarousel {
         const tagList = document.createElement("ul");
         tagList.setAttribute("aria-label", "Tags");
 
+        const isLink = this.settings.metadataTagLinks;
+
         tagList.innerHTML = item.tags
           .map(
             (tag, index, array) => `
                 <li>
-                    <span class="tag" rel="tag">${tag}${
+                    <span class="tag" rel="tag">${isLink ? `<a href="${this.collection.fullUrl}/tag/${this.convertToSlug(tag)}">` : ""}${tag}${isLink ? `</a>` : ""}${
               index < array.length - 1 && this.settings.tagsDelimiter === ", "
                 ? `<span class="tag-delimiter">,</span>`
                 : ""
@@ -698,12 +708,14 @@ class wmCollectionCarousel {
         const categoryList = document.createElement("ul");
         categoryList.setAttribute("aria-label", "Categories");
 
+        const isLink = this.settings.metadataCategoryLinks;
+
         if (item.categories?.length) {
           categoryList.innerHTML = item.categories
             .map(
               (category, index, array) => `
               <li>
-                <span class="category" rel="category">${category}${
+                <span class="category" rel="category">${isLink ? `<a href="${this.collection.fullUrl}/category/${this.convertToSlug(category)}">` : ""}${category}${isLink ? `</a>` : ""}${
                 index < array.length - 1 &&
                 this.settings.categoriesDelimiter === ", "
                   ? `<span class='category-delimiter'>,</span>`
@@ -727,7 +739,7 @@ class wmCollectionCarousel {
                 this.settings.categoriesDelimiter === ", "
                   ? "<span class='category-delimiter'>,</span>"
                   : ""
-              }</span>
+              }${isLink ? `</a>` : ""}</span>
               </li>
             `
             )
@@ -1299,7 +1311,7 @@ class wmCollectionCarousel {
 
         if (items.length >= limit) {
           items = items.slice(0, limit);
-          return {items, type};
+          return {items, type, collection};
         }
 
         if (json.pagination?.nextPage) {
@@ -1307,7 +1319,7 @@ class wmCollectionCarousel {
             json.pagination.nextPageUrl + "&format=json&cb=" + Date.now()
           );
         }
-        return {items, type};
+        return {items, type, collection};
       } catch (error) {
         console.error("Fetch operation failed:", error);
         throw error;
@@ -1400,6 +1412,7 @@ class wmCollectionCarousel {
     return elem.dispatchEvent(event);
   }
 }
+
 
 (function () {
   /**
@@ -9110,6 +9123,7 @@ class wmCollectionCarousel {
     return ie.use(ge), ie;
   })();
 })();
+
 
 
 (() => {
