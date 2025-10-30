@@ -841,8 +841,9 @@ class wmCollectionCarousel {
           const languageTag =
             window.Static?.SQUARESPACE_CONTEXT?.website?.language || "en-US";
 
-          // Add "from" if there are multiple variants
-          const pricePrefix = variants.length > 1 ? "from " : "";
+          // Add "from" only if there are multiple variants with different prices
+          const allSamePrice = variants.every(v => v.price === firstVariant.price);
+          const pricePrefix = variants.length > 1 && !allSamePrice ? "from " : "";
           const currencyInfo = currencyMap[currency] || {
             symbol: "$",
             prefix: true,
