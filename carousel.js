@@ -5,6 +5,7 @@ class wmCollectionCarousel {
       id: null,
       layout: "full-width", // header-adapt or folder
       fullWidth: false,
+      disableFullWidthOffset: false,
       speed: 300,
       limit: 20,
       featured: false,
@@ -137,7 +138,7 @@ class wmCollectionCarousel {
 
     // Create resize handler
     const updateSwiperOffsets = swiper => {
-      if (!swiper || !settings.fullWidth || settings.loop) return;
+      if (!swiper || !settings.fullWidth || settings.loop || settings.disableFullWidthOffset) return;
       let tempBlockWidth = 0;
       if (swiper.el.closest(".fluid-engine")) {
         const fluidEngine = swiper.el.closest(".fluid-engine");
