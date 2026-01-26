@@ -876,7 +876,6 @@ html:has([data-wm-plugin="collection-carousel"]) {
 }
 
 [data-wm-plugin="collection-carousel"] .swiper {
-  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y pinch-zoom;
   min-width: 0px;
