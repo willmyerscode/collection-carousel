@@ -39,6 +39,8 @@ class wmCollectionCarousel {
       ],
       slidesPerView: "auto",
       slidesPerGroup: 1,
+      groupSlides: false,
+      groupSlidesLoopStrategy: "keep-blanks", // or "disable-loop-when-uneven"
       spaceBetween: 30,
       loop: false,
       freeMode: freeMode,
@@ -49,6 +51,8 @@ class wmCollectionCarousel {
       autoplayDelay: 3000,
       autoplayDisableOnInteraction: false,
       navigation: true,
+      navigationArrowPrev: null,
+      navigationArrowNext: null,
       navigationLayout: "overlay",
       pagination: true,
       paginationType: "bullets",
@@ -136,6 +140,21 @@ class wmCollectionCarousel {
       settings.slidesPerViewLg || settings.slidesPerView
     );
 
+    const getGroupSize = (groupValue, fallbackGroupValue, viewValue) => {
+      if (settings.groupSlides) {
+        const parsedView = parseFloat(viewValue);
+        return Number.isFinite(parsedView) ? parsedView : 1;
+      }
+
+      const parsedGroup = parseInt(groupValue);
+      if (Number.isFinite(parsedGroup)) return parsedGroup;
+
+      const parsedFallbackGroup = parseInt(fallbackGroupValue);
+      if (Number.isFinite(parsedFallbackGroup)) return parsedFallbackGroup;
+
+      return 1;
+    };
+
     // Create resize handler
     const updateSwiperOffsets = swiper => {
       if (!swiper || !settings.fullWidth || settings.loop || settings.disableFullWidthOffset) return;
@@ -211,7 +230,11 @@ class wmCollectionCarousel {
 
     return {
       slidesPerView: mainView.slidesPerView,
-      slidesPerGroup: parseInt(settings.slidesPerGroup || 1),
+      slidesPerGroup: getGroupSize(
+        settings.slidesPerGroup,
+        settings.slidesPerGroup,
+        settings.slidesPerView
+      ),
       spaceBetween: parseInt(settings.spaceBetween),
       slidesOffsetBefore: 0,
       loop: settings.loop,
@@ -282,8 +305,10 @@ class wmCollectionCarousel {
           spaceBetween: parseInt(
             settings.spaceBetweenSm ?? settings.spaceBetween
           ),
-          slidesPerGroup: parseInt(
-            settings.slidesPerGroupSm || settings.slidesPerGroup
+          slidesPerGroup: getGroupSize(
+            settings.slidesPerGroupSm,
+            settings.slidesPerGroup,
+            settings.slidesPerViewSm || settings.slidesPerView
           ),
         },
         768: {
@@ -291,8 +316,10 @@ class wmCollectionCarousel {
           spaceBetween: parseInt(
             settings.spaceBetweenMd ?? settings.spaceBetween
           ),
-          slidesPerGroup: parseInt(
-            settings.slidesPerGroupMd || settings.slidesPerGroup
+          slidesPerGroup: getGroupSize(
+            settings.slidesPerGroupMd,
+            settings.slidesPerGroup,
+            settings.slidesPerViewMd || settings.slidesPerView
           ),
         },
         1024: {
@@ -300,8 +327,10 @@ class wmCollectionCarousel {
           spaceBetween: parseInt(
             settings.spaceBetweenLg ?? settings.spaceBetween
           ),
-          slidesPerGroup: parseInt(
-            settings.slidesPerGroupLg || settings.slidesPerGroup
+          slidesPerGroup: getGroupSize(
+            settings.slidesPerGroupLg,
+            settings.slidesPerGroup,
+            settings.slidesPerViewLg || settings.slidesPerView
           ),
         },
       },
@@ -953,6 +982,65 @@ class wmCollectionCarousel {
       this.items = this.items.filter(item => !item.upcoming);
     }
 
+    /* Apply groupSlidesLoopStrategy when loop + grouped slides would add blank slides */
+    if (this.settings.loop) {
+      const getEffectiveGroupSize = (groupVal, fallbackVal, viewVal) => {
+        if (this.settings.groupSlides) {
+          const parsed = parseFloat(viewVal);
+          return Number.isFinite(parsed) ? parsed : 1;
+        }
+        const g = parseInt(groupVal);
+        if (Number.isFinite(g)) return g;
+        const f = parseInt(fallbackVal);
+        return Number.isFinite(f) ? f : 1;
+      };
+      const groups = [
+        getEffectiveGroupSize(
+          this.settings.slidesPerGroup,
+          this.settings.slidesPerGroup,
+          this.settings.slidesPerView
+        ),
+        getEffectiveGroupSize(
+          this.settings.slidesPerGroupSm,
+          this.settings.slidesPerGroup,
+          this.settings.slidesPerViewSm || this.settings.slidesPerView
+        ),
+        getEffectiveGroupSize(
+          this.settings.slidesPerGroupMd,
+          this.settings.slidesPerGroup,
+          this.settings.slidesPerViewMd || this.settings.slidesPerView
+        ),
+        getEffectiveGroupSize(
+          this.settings.slidesPerGroupLg,
+          this.settings.slidesPerGroup,
+          this.settings.slidesPerViewLg || this.settings.slidesPerView
+        ),
+      ];
+      const isUneven = groups.some(
+        g => g > 1 && this.items.length % g !== 0
+      );
+      const maxGroup = Math.max(...groups);
+
+      if (isUneven) {
+        const strategy = this.settings.groupSlidesLoopStrategy || "keep-blanks";
+        const msg = `Collection carousel: ${this.items.length} items not divisible by group size (${maxGroup}). Loop would add blank slides.`;
+
+        if (strategy === "disable-loop-when-uneven") {
+          this.settings.loop = false;
+          this.settings.centeredSlides = false;
+          console.warn(msg + " Loop disabled (groupSlidesLoopStrategy: disable-loop-when-uneven).");
+          // const notification = document.createElement("div");
+          // notification.className = "collection-carousel-notification";
+          // notification.innerHTML = `<p>${msg} Loop has been disabled to avoid blank slides.</p>
+          //   <p>Add <code>data-group-slides-loop-strategy="keep-blanks"</code> to allow blank padding, or add more items so the count is divisible by ${maxGroup}.</p>
+          //   <p>This message will only appear in the editor.</p>`;
+          // this.el.appendChild(notification);
+        } else {
+          console.warn(msg + " Blank slides will be added (groupSlidesLoopStrategy: keep-blanks).");
+        }
+      }
+    }
+
     const builders = this.build();
 
     /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
@@ -1171,22 +1259,27 @@ class wmCollectionCarousel {
       nextButtonWrapper.className = "navigation-button-next";
       prevButtonWrapper.className = "navigation-button-prev";
 
-      const prevButton = document.createElement("button");
-      this.prevButton = prevButton;
-      prevButton.innerHTML = `<div class="swiper-button-background"></div>
-              <svg class="user-items-list-carousel__arrow-icon" viewBox="0 0 44 18" xmlns="http://www.w3.org/2000/svg">
+      const defaultArrowPrev = `<svg class="user-items-list-carousel__arrow-icon" viewBox="0 0 44 18" xmlns="http://www.w3.org/2000/svg">
                 <path class="user-items-list-carousel__arrow-icon-foreground user-items-list-carousel__arrow-icon-path" d="M9.90649 16.96L2.1221 9.17556L9.9065 1.39116"></path>
                 <path class="user-items-list-carousel__arrow-icon-foreground user-items-list-carousel__arrow-icon-path" d="M42.8633 9.18125L3.37868 9.18125"></path>
               </svg>`;
+      const defaultArrowNext = `<svg class="user-items-list-carousel__arrow-icon" viewBox="0 0 44 18" xmlns="http://www.w3.org/2000/svg">
+                <path class="user-items-list-carousel__arrow-icon-foreground user-items-list-carousel__arrow-icon-path" d="M34.1477 1.39111L41.9321 9.17551L34.1477 16.9599"></path>
+                <path class="user-items-list-carousel__arrow-icon-foreground user-items-list-carousel__arrow-icon-path" d="M1.19088 9.16982H40.6755"></path>
+              </svg>`;
+      const arrowPrev =
+        this.settings.navigationArrowPrev ?? defaultArrowPrev;
+      const arrowNext =
+        this.settings.navigationArrowNext ?? defaultArrowNext;
+
+      const prevButton = document.createElement("button");
+      this.prevButton = prevButton;
+      prevButton.innerHTML = `<div class="swiper-button-background"></div>${arrowPrev}`;
       prevButtonWrapper.appendChild(prevButton);
 
       const nextButton = document.createElement("button");
       this.nextButton = nextButton;
-      nextButton.innerHTML = `<div class="swiper-button-background"></div>
-              <svg class="user-items-list-carousel__arrow-icon" viewBox="0 0 44 18" xmlns="http://www.w3.org/2000/svg">
-                <path class="user-items-list-carousel__arrow-icon-foreground user-items-list-carousel__arrow-icon-path" d="M34.1477 1.39111L41.9321 9.17551L34.1477 16.9599"></path>
-                <path class="user-items-list-carousel__arrow-icon-foreground user-items-list-carousel__arrow-icon-path" d="M1.19088 9.16982H40.6755"></path>
-              </svg>`;
+      nextButton.innerHTML = `<div class="swiper-button-background"></div>${arrowNext}`;
       nextButtonWrapper.appendChild(nextButton);
 
       navigationWrapper.appendChild(prevButtonWrapper);
@@ -1244,6 +1337,20 @@ class wmCollectionCarousel {
 
     const getCacheMetaKey = cacheKey => {
       return `${cacheKey}_meta`;
+    };
+
+    const appendQueryParams = (url, params = {}) => {
+      const [base, hash = ""] = url.split("#");
+      const [path, query = ""] = base.split("?");
+      const search = new URLSearchParams(query);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          search.set(key, String(value));
+        }
+      });
+      const queryString = search.toString();
+      const rebuiltUrl = queryString ? `${path}?${queryString}` : path;
+      return hash ? `${rebuiltUrl}#${hash}` : rebuiltUrl;
     };
 
     const isCacheValid = metaKey => {
@@ -1318,7 +1425,7 @@ class wmCollectionCarousel {
 
         if (json.pagination?.nextPage) {
           await getData(
-            json.pagination.nextPageUrl + "&format=json&cb=" + Date.now()
+            appendQueryParams(json.pagination.nextPageUrl, {format: "json"})
           );
         }
         return {items, type, collection};
@@ -1329,7 +1436,9 @@ class wmCollectionCarousel {
     };
 
     const saveFreshDataToCache = async () => {
-      const freshData = await getData(sourceUrl + "?format=json");
+      const freshData = await getData(
+        appendQueryParams(sourceUrl, {format: "json"})
+      );
 
       // Save to cache if duration is set
       if (this.settings.cacheDuration > 0) {
@@ -1356,7 +1465,9 @@ class wmCollectionCarousel {
       }
 
       // Fetch fresh data
-      const freshData = await getData(sourceUrl + "?format=json");
+      const freshData = await getData(
+        appendQueryParams(sourceUrl, {format: "json"})
+      );
 
       // Save to cache if duration is set
       if (this.settings.cacheDuration > 0) {
