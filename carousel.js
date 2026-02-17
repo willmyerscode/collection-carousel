@@ -143,13 +143,16 @@ class wmCollectionCarousel {
     const getGroupSize = (groupValue, fallbackGroupValue, viewValue) => {
       if (settings.groupSlides) {
         const parsedView = parseFloat(viewValue);
-        return Number.isFinite(parsedView) ? parsedView : 1;
+        // Swiper grouped navigation expects integer group sizes.
+        return Number.isFinite(parsedView)
+          ? Math.max(1, Math.floor(parsedView))
+          : 1;
       }
 
-      const parsedGroup = parseInt(groupValue);
+      const parsedGroup = parseInt(groupValue, 10);
       if (Number.isFinite(parsedGroup)) return parsedGroup;
 
-      const parsedFallbackGroup = parseInt(fallbackGroupValue);
+      const parsedFallbackGroup = parseInt(fallbackGroupValue, 10);
       if (Number.isFinite(parsedFallbackGroup)) return parsedFallbackGroup;
 
       return 1;
@@ -987,11 +990,13 @@ class wmCollectionCarousel {
       const getEffectiveGroupSize = (groupVal, fallbackVal, viewVal) => {
         if (this.settings.groupSlides) {
           const parsed = parseFloat(viewVal);
-          return Number.isFinite(parsed) ? parsed : 1;
+          return Number.isFinite(parsed)
+            ? Math.max(1, Math.floor(parsed))
+            : 1;
         }
-        const g = parseInt(groupVal);
+        const g = parseInt(groupVal, 10);
         if (Number.isFinite(g)) return g;
-        const f = parseInt(fallbackVal);
+        const f = parseInt(fallbackVal, 10);
         return Number.isFinite(f) ? f : 1;
       };
       const groups = [
