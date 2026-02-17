@@ -41,6 +41,7 @@ class wmCollectionCarousel {
       slidesPerGroup: 1,
       groupSlides: false,
       groupSlidesLoopStrategy: "keep-blanks", // or "disable-loop-when-uneven"
+      loopFillItems: false,
       spaceBetween: 30,
       loop: false,
       freeMode: freeMode,
@@ -1046,11 +1047,34 @@ class wmCollectionCarousel {
       }
     }
 
+    /* Duplicate items to fill the view when loopFillItems is enabled */
+    if (this.settings.loop && this.settings.loopFillItems && this.items.length > 0) {
+      const maxPerView = Math.max(
+        ...[
+          this.settings.slidesPerView,
+          this.settings.slidesPerViewSm || this.settings.slidesPerView,
+          this.settings.slidesPerViewMd || this.settings.slidesPerView,
+          this.settings.slidesPerViewLg || this.settings.slidesPerView,
+        ].map(v => {
+          const n = parseFloat(v);
+          return Number.isFinite(n) ? n : 0;
+        })
+      );
+      const minSlides = Math.ceil(maxPerView) * 2 + 1;
+      if (this.items.length < minSlides) {
+        const origItems = [...this.items];
+        while (this.items.length < minSlides) {
+          this.items.push(...origItems);
+        }
+      }
+    }
+
     const builders = this.build();
 
     /* Normalize slidesPerViewLg if loop is enabled and slidesPerViewLg + 2 >= total slides */
     if (
       this.settings.loop &&
+      !this.settings.loopFillItems &&
       this.settings.slidesPerViewLg + 1 > this.items.length
     ) {
       const notification = document.createElement("div");
