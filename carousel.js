@@ -52,7 +52,6 @@ class wmCollectionCarousel {
       autoplayDelay: 3000,
       autoplayDisableOnInteraction: false,
       autoplayToggle: false, // show a WCAG 2.2.2 compliant pause/play toggle button
-
       navigation: true,
       navigationArrowPrev: null,
       navigationArrowNext: null,
