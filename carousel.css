@@ -1277,9 +1277,21 @@ html:has([data-wm-plugin="collection-carousel"]) {
 /* Autoplay Toggle Button (WCAG 2.2.2 Pause, Stop, Hide) */
 [data-wm-plugin="collection-carousel"] .wm-cc-autoplay-toggle {
   position: absolute;
-  bottom: var(--wm-cc-autoplay-toggle-bottom, 12px);
   left: var(--wm-cc-autoplay-toggle-left, 12px);
   z-index: 10;
+  display: flex;
+  align-items: center;
+}
+/* In the pagination controls row: sit left, vertically aligned with the dots */
+[data-wm-plugin="collection-carousel"]
+  .collection-carousel-pagination
+  .wm-cc-autoplay-toggle {
+  top: var(--wm-cc-pagination-top-padding, 17px);
+  bottom: 0;
+}
+/* Fallback when pagination is off: pin to the bottom-left of the slides */
+[data-wm-plugin="collection-carousel"] .swiper .wm-cc-autoplay-toggle {
+  bottom: var(--wm-cc-autoplay-toggle-bottom, 12px);
 }
 [data-wm-plugin="collection-carousel"] .wm-cc-autoplay-toggle button {
   border: none;

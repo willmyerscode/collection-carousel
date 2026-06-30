@@ -1355,9 +1355,11 @@ class wmCollectionCarousel {
             <polygon points="6,4 20,12 6,20"></polygon>
           </svg>
         </button>`;
-      // Append inside the swiper container (position: relative) so the toggle
-      // anchors to the slides, not the page. this.el is position: static.
-      this.swiperContainer.appendChild(autoplayToggle);
+      // Prefer the pagination controls row (sits below all slide content, so
+      // the button never overlaps a slide). Fall back to the swiper container
+      // (position: relative) when pagination is off, since this.el is static.
+      const toggleHost = this.pagination || this.swiperContainer;
+      toggleHost.appendChild(autoplayToggle);
     }
   }
   addAutoplayToggle() {
