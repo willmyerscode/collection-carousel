@@ -51,6 +51,7 @@ class wmCollectionCarousel {
       autoplay: false,
       autoplayDelay: 3000,
       autoplayDisableOnInteraction: false,
+      autoplayToggle: false, // show a WCAG 2.2.2 compliant pause/play toggle button
       navigation: true,
       navigationArrowPrev: null,
       navigationArrowNext: null,
@@ -686,6 +687,7 @@ class wmCollectionCarousel {
       this.swiperContainer,
       this.swiperSettings
     );
+    this.addAutoplayToggle();
     wmCollectionCarousel.emitEvent("wmCollectionCarousel:ready", self);
     this.el.wmCollectionCarousel = {
       settings: this.settings,
@@ -1334,6 +1336,58 @@ class wmCollectionCarousel {
     ) {
       this.navigationWrapper.append(this.pagination);
     }
+
+    // WCAG 2.2.2 (Pause, Stop, Hide): add a pause/play toggle when autoplay is
+    // enabled. Opt-in only via data-autoplay-toggle so existing sites are
+    // unaffected. The carousel starts playing, so the button shows the pause
+    // icon and labels itself "Pause slideshow" initially.
+    if (this.settings.autoplay && this.settings.autoplayToggle) {
+      const autoplayToggle = document.createElement("div");
+      this.autoplayToggle = autoplayToggle;
+      autoplayToggle.className = "wm-cc-autoplay-toggle";
+      autoplayToggle.innerHTML = `
+        <button aria-label="Pause slideshow" data-playing="true">
+          <svg class="wm-cc-icon-pause" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+          <svg class="wm-cc-icon-play" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <polygon points="6,4 20,12 6,20"></polygon>
+          </svg>
+        </button>`;
+      // Prefer the pagination controls row (sits below all slide content, so
+      // the button never overlaps a slide). Fall back to the swiper container
+      // (position: relative) when pagination is off, since this.el is static.
+      const toggleHost = this.pagination || this.swiperContainer;
+      toggleHost.appendChild(autoplayToggle);
+    }
+  }
+  addAutoplayToggle() {
+    const toggle = this.autoplayToggle?.querySelector("button");
+    if (!toggle || !this.swiper?.autoplay) return;
+
+    this._autoplayUserPaused = false;
+
+    const updateToggleState = playing => {
+      toggle.setAttribute(
+        "aria-label",
+        playing ? "Pause slideshow" : "Play slideshow"
+      );
+      toggle.dataset.playing = String(playing);
+    };
+
+    toggle.addEventListener("click", () => {
+      if (this.swiper.autoplay.running) {
+        this._autoplayUserPaused = true;
+        this.swiper.autoplay.stop();
+      } else {
+        this._autoplayUserPaused = false;
+        this.swiper.autoplay.start();
+      }
+    });
+
+    this.swiper.on("autoplayStop", () => updateToggleState(false));
+    this.swiper.on("autoplayStart", () => updateToggleState(true));
   }
   async getCollectionData() {
     const sourceUrl = this.el.dataset.source;
