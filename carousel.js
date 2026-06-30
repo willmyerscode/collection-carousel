@@ -1355,7 +1355,9 @@ class wmCollectionCarousel {
             <polygon points="6,4 20,12 6,20"></polygon>
           </svg>
         </button>`;
-      this.el.appendChild(autoplayToggle);
+      // Append inside the swiper container (position: relative) so the toggle
+      // anchors to the slides, not the page. this.el is position: static.
+      this.swiperContainer.appendChild(autoplayToggle);
     }
   }
   addAutoplayToggle() {
